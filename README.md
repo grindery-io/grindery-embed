@@ -18,7 +18,7 @@ This message will be send to the parent once the App has been loaded, and on eve
     method: "gr_resize",
     params: {
         height: 1024
-    }
+    },
     id: "some_id_1",
 }
 ```
@@ -48,7 +48,7 @@ This message can be send to the App to provide initial configuration parameters.
     params: {
         paramName1: "paramValue1",
         paramName2: "paramValue2"
-    }
+    },
     id: "some_id_3"
 }
 ```
