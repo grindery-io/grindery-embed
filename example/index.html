@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Grindery Embed iframe example</title>
+  </head>
+  <body>
+    <iframe style="width: 100%; height: auto;" id="iframe" src="http://localhost:3000"></iframe>
+    <script type="text/javascript">
+      function handleMessage (event) {
+        var message;
+        if(event.data && event.data.method && event.data.method === 'gr_resize'){
+          if(event.data.params && event.data.params.height){
+            document.getElementById('iframe').style.height = (event.data.params.height + 1) + 'px'
+          }
+        }
+        if(event.data && event.data.method && event.data.method === 'gr_complete'){
+          setTimeout(function(){
+            document.getElementById("iframe").remove();
+          }, 1000)
+          
+        }
+      }
+      window.addEventListener("message", handleMessage, false);
+
+      setTimeout(function(){
+        var iframeWindow = document.getElementById("iframe").contentWindow
+        iframeWindow.postMessage({
+          jsonrpc: "2.0",
+          method: 'gr_initialize',
+          params: {
+            param1: 'value1',
+            param2: 'value2'
+          },
+          id: Date.now(),
+        }, "*");
+      }, 1000)
+      
+      </script>
+  </body>
+</html>
