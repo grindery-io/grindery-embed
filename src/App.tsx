@@ -3,6 +3,8 @@ import "./App.css";
 import useContentHeight from "./hooks/useContentHeight";
 import { sendPostMessage } from "./utils/postMessages";
 import useConfig from "./hooks/useConfig";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Page from "./components/Page";
 
 function App() {
   const { height } = useContentHeight();
@@ -30,12 +32,25 @@ function App() {
   }, [config]);
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <h3>Grindery integration mockup</h3>
-        <p>{completed ? "Completed" : "In progress..."}</p>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/:triggerConnectorKey/:actionConnectorKey"
+          element={<Page />}
+        />
+        <Route
+          path="/"
+          element={
+            <div className="App">
+              <header className="App-header">
+                <h3>Grindery integration mockup</h3>
+                <p>{completed ? "Completed" : "In progress..."}</p>
+              </header>
+            </div>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
