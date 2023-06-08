@@ -116,7 +116,11 @@ const HqGsheetIntegrationStep2 = () => {
         gap="30px"
         sx={{ padding: "32px" }}
       >
-        <Button variant="contained" onClick={handleBackButtonClick}>
+        <Button
+          variant="contained"
+          onClick={handleBackButtonClick}
+          color="secondary"
+        >
           Back
         </Button>
         <Button variant="contained" fullWidth onClick={handleImportButtonClick}>

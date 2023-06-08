@@ -42,6 +42,7 @@ type ContextProps = {
   input: any;
   hqFieldsInput: any;
   step: number;
+  connectionFailed: boolean;
   handleInputChange: (key: string, value: string) => void;
   handleHqFieldsInputChange: (key: string, value: string) => void;
   handlePreviewButtonClick: () => void;
@@ -62,6 +63,7 @@ export const HqGsheetIntegrationContext = createContext<ContextProps>({
   input: {},
   hqFieldsInput: {},
   step: 1,
+  connectionFailed: false,
   handleInputChange: () => {},
   handleHqFieldsInputChange: () => {},
   handlePreviewButtonClick: () => {},
@@ -75,15 +77,13 @@ export const HqGsheetIntegrationContextProvider = ({
 }: UserProviderProps) => {
   const [step, setStep] = useState<number>(1);
   const [gsheetConnector, setGsheetConnector] = useState<Connector | null>();
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-  const code = urlParams.get("code");
-  const authCode = code || null;
+  const [authCode, setAuthCode] = useState<string | null>(null);
   const { accessToken } = useAppSelector(selectUserStore);
   const [credentials, setCredentials] = useState<any>(null);
   const [input, setInput] = useState<any>({});
   const [hqFieldsInput, setHqFieldsInput] = useState<any>({});
   const [updatedTrigger, setUpdatedTrigger] = useState<any>(null);
+  const [connectionFailed, setConnectionFailed] = useState<boolean>(false);
   const gsheetTrigger = gsheetConnector?.triggers?.find(
     (trig: any) => trig.key === "newSpreadsheetRow"
   );
@@ -116,23 +116,23 @@ export const HqGsheetIntegrationContextProvider = ({
   };
 
   const getGsheetCredentials = useCallback(async () => {
-    const res = await axios
-      .post(
-        "https://orchestrator.grindery.org/credentials/auth/complete",
-        { code: authCode },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken || ""}`,
-          },
-        }
-      )
-      .catch(() => {
-        window.location.href = `https://orchestrator.grindery.org/credentials/production/googleSheets/auth?access_token=${accessToken}&redirect_uri=${
-          window.location.origin + window.location.pathname
-        }`;
-      });
-    if (res && res.data) {
-      setCredentials(res.data || null);
+    if (accessToken && authCode) {
+      const res = await axios
+        .post(
+          "https://orchestrator.grindery.org/credentials/auth/complete",
+          { code: authCode },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken || ""}`,
+            },
+          }
+        )
+        .catch(() => {
+          // handle error
+        });
+      if (res && res.data) {
+        setCredentials(res.data || null);
+      }
     }
   }, [accessToken, authCode]);
 
@@ -189,14 +189,35 @@ export const HqGsheetIntegrationContextProvider = ({
   };
 
   const handleImportButtonClick = () => {
-    setStep(0);
-    sendPostMessage("gr_complete");
+    setStep(3);
   };
 
   useEffect(() => {
+    function handleMessage(event: any) {
+      if (
+        event.data &&
+        event.data.method === "gr_authCode" &&
+        event.data.params &&
+        event.data.params.authCode
+      ) {
+        setAuthCode(event.data.params.authCode);
+      }
+    }
+
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
+
+  useEffect(() => {
     if (accessToken && !authCode) {
-      window.location.href = `https://orchestrator.grindery.org/credentials/production/googleSheets/auth?access_token=${accessToken}&redirect_uri=${window.location.href}`;
-    } else if (accessToken && authCode) {
+      window.open(
+        `https://orchestrator.grindery.org/credentials/production/googleSheets/auth?access_token=${accessToken}&redirect_uri=${window.location.origin}/oauth`
+      );
+    }
+  }, [accessToken, authCode]);
+
+  useEffect(() => {
+    if (accessToken && authCode) {
       getGsheetConnector();
       getGsheetCredentials();
     }
@@ -208,7 +229,12 @@ export const HqGsheetIntegrationContextProvider = ({
     }
   }, [accessToken, credentials, updateTrigger]);
 
-  console.log("trigger", trigger);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setConnectionFailed(true);
+    }, 60000);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <HqGsheetIntegrationContext.Provider
@@ -218,6 +244,7 @@ export const HqGsheetIntegrationContextProvider = ({
         input,
         hqFieldsInput,
         step,
+        connectionFailed,
         handleInputChange,
         handleHqFieldsInputChange,
         handlePreviewButtonClick,

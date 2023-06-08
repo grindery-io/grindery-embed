@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   FormControl,
-  InputLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -14,6 +13,7 @@ import {
   HQ_FIELDS,
   useHqGsheetIntegrationContext,
 } from "./HqGsheetIntegrationContext";
+import { CustomLabel, Loading } from "../../components";
 
 const HqGsheetIntegrationStep1 = () => {
   const {
@@ -21,6 +21,7 @@ const HqGsheetIntegrationStep1 = () => {
     trigger,
     input,
     hqFieldsInput,
+    connectionFailed,
     handleInputChange,
     handleHqFieldsInputChange,
     handlePreviewButtonClick,
@@ -66,54 +67,61 @@ const HqGsheetIntegrationStep1 = () => {
             {trigger?.operation?.inputFields?.find(
               (field: any) => field.key === "spreadsheet"
             ) && (
-              <FormControl fullWidth>
-                <InputLabel id="spreadsheet-label">
+              <Box>
+                <CustomLabel id="spreadsheet-label">
                   Choose spreadsheet
-                </InputLabel>
-                <Select
-                  labelId="spreadsheet-label"
-                  id="spreadsheet-select"
-                  value={input.spreadsheet || ""}
-                  label="Choose spreadsheet"
-                  onChange={(event: SelectChangeEvent) => {
-                    handleInputChange("spreadsheet", event.target.value || "");
-                  }}
-                >
-                  <MenuItem value={""}>Select spreadsheet</MenuItem>
-                  {trigger?.operation?.inputFields
-                    ?.find((field: any) => field.key === "spreadsheet")
-                    ?.choices?.map((choice: any) => (
-                      <MenuItem key={choice.value} value={choice.value}>
-                        {choice.label}
-                      </MenuItem>
-                    ))}
-                </Select>
-              </FormControl>
+                </CustomLabel>
+                <FormControl fullWidth>
+                  <Select
+                    labelId="spreadsheet-label"
+                    id="spreadsheet-select"
+                    value={input.spreadsheet || ""}
+                    label=""
+                    onChange={(event: SelectChangeEvent) => {
+                      handleInputChange(
+                        "spreadsheet",
+                        event.target.value || ""
+                      );
+                    }}
+                  >
+                    <MenuItem value={""}>Select spreadsheet</MenuItem>
+                    {trigger?.operation?.inputFields
+                      ?.find((field: any) => field.key === "spreadsheet")
+                      ?.choices?.map((choice: any) => (
+                        <MenuItem key={choice.value} value={choice.value}>
+                          {choice.label}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </FormControl>
+              </Box>
             )}
             {trigger?.operation?.inputFields?.find(
               (field: any) => field.key === "worksheet"
             ) && (
-              <FormControl fullWidth>
-                <InputLabel id="worksheet-label">Choose worksheet</InputLabel>
-                <Select
-                  labelId="worksheet-label"
-                  id="worksheet-select"
-                  value={input.worksheet || ""}
-                  label="Choose worksheet"
-                  onChange={(event: SelectChangeEvent) => {
-                    handleInputChange("worksheet", event.target.value || "");
-                  }}
-                >
-                  <MenuItem value={""}>Select worksheet</MenuItem>
-                  {trigger?.operation?.inputFields
-                    ?.find((field: any) => field.key === "worksheet")
-                    ?.choices?.map((choice: any) => (
-                      <MenuItem key={choice.value} value={choice.value}>
-                        {choice.label}
-                      </MenuItem>
-                    ))}
-                </Select>
-              </FormControl>
+              <Box>
+                <CustomLabel id="worksheet-label">Choose worksheet</CustomLabel>
+                <FormControl fullWidth>
+                  <Select
+                    labelId="worksheet-label"
+                    id="worksheet-select"
+                    value={input.worksheet || ""}
+                    label=""
+                    onChange={(event: SelectChangeEvent) => {
+                      handleInputChange("worksheet", event.target.value || "");
+                    }}
+                  >
+                    <MenuItem value={""}>Select worksheet</MenuItem>
+                    {trigger?.operation?.inputFields
+                      ?.find((field: any) => field.key === "worksheet")
+                      ?.choices?.map((choice: any) => (
+                        <MenuItem key={choice.value} value={choice.value}>
+                          {choice.label}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </FormControl>
+              </Box>
             )}
           </Stack>
           <Box
@@ -133,30 +141,32 @@ const HqGsheetIntegrationStep1 = () => {
             {trigger?.operation?.outputFields &&
               trigger?.operation?.outputFields.length > 0 &&
               HQ_FIELDS.map((field) => (
-                <FormControl fullWidth key={field.key}>
-                  <InputLabel id={`${field.key}-label`}>
+                <Box>
+                  <CustomLabel id={`${field.key}-label`}>
                     {field.label}
-                  </InputLabel>
-                  <Select
-                    labelId={`${field.key}-label`}
-                    id={`${field.key}-select`}
-                    value={hqFieldsInput[field.key] || ""}
-                    label={field.label}
-                    onChange={(event: SelectChangeEvent) => {
-                      handleHqFieldsInputChange(
-                        field.key,
-                        event.target.value || ""
-                      );
-                    }}
-                  >
-                    <MenuItem value={""}>Select spreadsheet column</MenuItem>
-                    {trigger?.operation?.outputFields?.map((choice: any) => (
-                      <MenuItem key={choice.key} value={choice.key}>
-                        {choice.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                  </CustomLabel>
+                  <FormControl fullWidth key={field.key}>
+                    <Select
+                      labelId={`${field.key}-label`}
+                      id={`${field.key}-select`}
+                      value={hqFieldsInput[field.key] || ""}
+                      label=""
+                      onChange={(event: SelectChangeEvent) => {
+                        handleHqFieldsInputChange(
+                          field.key,
+                          event.target.value || ""
+                        );
+                      }}
+                    >
+                      <MenuItem value={""}>Select spreadsheet column</MenuItem>
+                      {trigger?.operation?.outputFields?.map((choice: any) => (
+                        <MenuItem key={choice.key} value={choice.key}>
+                          {choice.label}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Box>
               ))}
           </Stack>
         </Stack>
@@ -168,7 +178,11 @@ const HqGsheetIntegrationStep1 = () => {
         gap="30px"
         sx={{ padding: "32px" }}
       >
-        <Button variant="contained" onClick={handleCancelButtonClick}>
+        <Button
+          variant="contained"
+          onClick={handleCancelButtonClick}
+          color="secondary"
+        >
           Cancel
         </Button>
         <Button
@@ -186,7 +200,17 @@ const HqGsheetIntegrationStep1 = () => {
         </Button>
       </Stack>
     </>
-  ) : null;
+  ) : (
+    <Loading
+      title="Connecting to Google Sheets..."
+      subtitle={
+        connectionFailed
+          ? "This is taking longer than expected, please wait\na few more moments, or"
+          : "Allow popup windows in your browser\nto connect to Google Sheets"
+      }
+      tryAgain={connectionFailed}
+    />
+  );
 };
 
 export default HqGsheetIntegrationStep1;

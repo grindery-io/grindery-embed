@@ -1,12 +1,14 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { Provider as StoreProvider } from "react-redux";
+import { ThemeProvider } from "@mui/material/styles";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import GrinderyNexusContextProvider from "use-grindery-nexus";
 import "./index.css";
 import App from "./App";
 import { store } from "./store";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { ConfigProvider, UserProvider } from "./providers";
-import GrinderyNexusContextProvider from "use-grindery-nexus";
+import { theme } from "./theme";
 
 const rootElement = document.getElementById("root");
 if (!rootElement) {
@@ -18,7 +20,7 @@ const root = createRoot(rootElement);
 let router = createBrowserRouter([{ path: "*", element: <App /> }]);
 
 root.render(
-  <React.StrictMode>
+  <ThemeProvider theme={theme}>
     <GrinderyNexusContextProvider>
       <StoreProvider store={store}>
         <ConfigProvider>
@@ -28,5 +30,5 @@ root.render(
         </ConfigProvider>
       </StoreProvider>
     </GrinderyNexusContextProvider>
-  </React.StrictMode>
+  </ThemeProvider>
 );
