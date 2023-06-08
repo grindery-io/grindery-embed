@@ -10,12 +10,12 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
 } from "@mui/material";
 import {
   HQ_FIELDS,
   useHqGsheetIntegrationContext,
 } from "./HqGsheetIntegrationContext";
+import { StepHeader } from "../../components";
 
 const HqGsheetIntegrationStep2 = () => {
   const {
@@ -39,19 +39,10 @@ const HqGsheetIntegrationStep2 = () => {
 
   return isAuthenticated && trigger ? (
     <>
-      <Box
-        sx={{
-          padding: "32px",
-          borderBottom: "1px solid #E5E7EB",
-        }}
-      >
-        <Typography variant="h1" sx={{ margin: "0 0 6px", padding: 0 }}>
-          Google Sheets Preview
-        </Typography>
-        <Typography variant="body2" sx={{ margin: 0, padding: 0 }}>
-          Select the rows you would like to import
-        </Typography>
-      </Box>
+      <StepHeader
+        title="Google Sheets Preview"
+        subtitle="Select the rows you would like to import"
+      />
       <Box
         sx={{
           borderBottom: "1px solid #E5E7EB",

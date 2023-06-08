@@ -1,19 +1,10 @@
 import React from "react";
-import {
-  Box,
-  Button,
-  FormControl,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Button, SelectChangeEvent, Stack } from "@mui/material";
 import {
   HQ_FIELDS,
   useHqGsheetIntegrationContext,
 } from "./HqGsheetIntegrationContext";
-import { CustomLabel, Loading } from "../../components";
+import { CustomSelect, Loading, StepHeader } from "../../components";
 
 const HqGsheetIntegrationStep1 = () => {
   const {
@@ -30,19 +21,10 @@ const HqGsheetIntegrationStep1 = () => {
 
   return isAuthenticated && trigger ? (
     <>
-      <Box
-        sx={{
-          padding: "32px",
-          borderBottom: "1px solid #E5E7EB",
-        }}
-      >
-        <Typography variant="h1" sx={{ margin: "0 0 6px", padding: 0 }}>
-          Google Sheets Configuration
-        </Typography>
-        <Typography variant="body2" sx={{ margin: 0, padding: 0 }}>
-          Select a spreadsheet and map each column accordingly
-        </Typography>
-      </Box>
+      <StepHeader
+        title="Google Sheets Configuration"
+        subtitle="Select a spreadsheet and map each column accordingly"
+      />
       <Box
         sx={{
           padding: "32px",
@@ -67,61 +49,38 @@ const HqGsheetIntegrationStep1 = () => {
             {trigger?.operation?.inputFields?.find(
               (field: any) => field.key === "spreadsheet"
             ) && (
-              <Box>
-                <CustomLabel id="spreadsheet-label">
-                  Choose spreadsheet
-                </CustomLabel>
-                <FormControl fullWidth>
-                  <Select
-                    labelId="spreadsheet-label"
-                    id="spreadsheet-select"
-                    value={input.spreadsheet || ""}
-                    label=""
-                    onChange={(event: SelectChangeEvent) => {
-                      handleInputChange(
-                        "spreadsheet",
-                        event.target.value || ""
-                      );
-                    }}
-                  >
-                    <MenuItem value={""}>Select spreadsheet</MenuItem>
-                    {trigger?.operation?.inputFields
-                      ?.find((field: any) => field.key === "spreadsheet")
-                      ?.choices?.map((choice: any) => (
-                        <MenuItem key={choice.value} value={choice.value}>
-                          {choice.label}
-                        </MenuItem>
-                      ))}
-                  </Select>
-                </FormControl>
-              </Box>
+              <CustomSelect
+                name="spreadsheet"
+                label="Choose spreadsheet"
+                value={input.spreadsheet || ""}
+                placeholder="Select spreadsheet"
+                options={
+                  trigger?.operation?.inputFields?.find(
+                    (field: any) => field.key === "spreadsheet"
+                  )?.choices || []
+                }
+                onChange={(event: SelectChangeEvent) => {
+                  handleInputChange("spreadsheet", event.target.value || "");
+                }}
+              />
             )}
             {trigger?.operation?.inputFields?.find(
               (field: any) => field.key === "worksheet"
             ) && (
-              <Box>
-                <CustomLabel id="worksheet-label">Choose worksheet</CustomLabel>
-                <FormControl fullWidth>
-                  <Select
-                    labelId="worksheet-label"
-                    id="worksheet-select"
-                    value={input.worksheet || ""}
-                    label=""
-                    onChange={(event: SelectChangeEvent) => {
-                      handleInputChange("worksheet", event.target.value || "");
-                    }}
-                  >
-                    <MenuItem value={""}>Select worksheet</MenuItem>
-                    {trigger?.operation?.inputFields
-                      ?.find((field: any) => field.key === "worksheet")
-                      ?.choices?.map((choice: any) => (
-                        <MenuItem key={choice.value} value={choice.value}>
-                          {choice.label}
-                        </MenuItem>
-                      ))}
-                  </Select>
-                </FormControl>
-              </Box>
+              <CustomSelect
+                name="worksheet"
+                label="Choose worksheet"
+                value={input.worksheet || ""}
+                placeholder="Select worksheet"
+                options={
+                  trigger?.operation?.inputFields?.find(
+                    (field: any) => field.key === "worksheet"
+                  )?.choices || []
+                }
+                onChange={(event: SelectChangeEvent) => {
+                  handleInputChange("worksheet", event.target.value || "");
+                }}
+              />
             )}
           </Stack>
           <Box
@@ -141,32 +100,25 @@ const HqGsheetIntegrationStep1 = () => {
             {trigger?.operation?.outputFields &&
               trigger?.operation?.outputFields.length > 0 &&
               HQ_FIELDS.map((field) => (
-                <Box>
-                  <CustomLabel id={`${field.key}-label`}>
-                    {field.label}
-                  </CustomLabel>
-                  <FormControl fullWidth key={field.key}>
-                    <Select
-                      labelId={`${field.key}-label`}
-                      id={`${field.key}-select`}
-                      value={hqFieldsInput[field.key] || ""}
-                      label=""
-                      onChange={(event: SelectChangeEvent) => {
-                        handleHqFieldsInputChange(
-                          field.key,
-                          event.target.value || ""
-                        );
-                      }}
-                    >
-                      <MenuItem value={""}>Select spreadsheet column</MenuItem>
-                      {trigger?.operation?.outputFields?.map((choice: any) => (
-                        <MenuItem key={choice.key} value={choice.key}>
-                          {choice.label}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Box>
+                <CustomSelect
+                  key={field.key}
+                  name={field.key}
+                  label={field.label}
+                  value={hqFieldsInput[field.key] || ""}
+                  placeholder="Select spreadsheet column"
+                  options={
+                    trigger?.operation?.outputFields?.map((output: any) => ({
+                      value: output.key,
+                      label: output.label,
+                    })) || []
+                  }
+                  onChange={(event: SelectChangeEvent) => {
+                    handleHqFieldsInputChange(
+                      field.key,
+                      event.target.value || ""
+                    );
+                  }}
+                />
               ))}
           </Stack>
         </Stack>
