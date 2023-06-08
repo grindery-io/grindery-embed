@@ -1,10 +1,10 @@
 import HqGsheetIntegrationContextProvider from "./HqGsheetIntegrationContext";
-import HqGsheetIntegrationStep1 from "./HqGsheetIntegrationStep1";
+import HqGsheetIntegrationSteps from "./HqGsheetIntegrationSteps";
 
 const HqGsheetIntegration = () => {
   return (
     <HqGsheetIntegrationContextProvider>
-      <HqGsheetIntegrationStep1 />
+      <HqGsheetIntegrationSteps />
     </HqGsheetIntegrationContextProvider>
   );
 };

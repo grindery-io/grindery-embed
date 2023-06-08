@@ -10,6 +10,7 @@ import NexusClient from "grindery-nexus-client";
 import { useAppSelector } from "../../store";
 import { selectUserStore } from "../../store/slices/userSlice";
 import axios from "axios";
+import { sendPostMessage } from "../../utils/postMessages";
 
 export const HQ_FIELDS = [
   {
@@ -40,8 +41,13 @@ type ContextProps = {
   isAuthenticated: boolean;
   input: any;
   hqFieldsInput: any;
+  step: number;
   handleInputChange: (key: string, value: string) => void;
   handleHqFieldsInputChange: (key: string, value: string) => void;
+  handlePreviewButtonClick: () => void;
+  handleCancelButtonClick: () => void;
+  handleBackButtonClick: () => void;
+  handleImportButtonClick: () => void;
 };
 
 // Context provider props
@@ -55,13 +61,19 @@ export const HqGsheetIntegrationContext = createContext<ContextProps>({
   isAuthenticated: false,
   input: {},
   hqFieldsInput: {},
+  step: 1,
   handleInputChange: () => {},
   handleHqFieldsInputChange: () => {},
+  handlePreviewButtonClick: () => {},
+  handleCancelButtonClick: () => {},
+  handleBackButtonClick: () => {},
+  handleImportButtonClick: () => {},
 });
 
 export const HqGsheetIntegrationContextProvider = ({
   children,
 }: UserProviderProps) => {
+  const [step, setStep] = useState<number>(1);
   const [gsheetConnector, setGsheetConnector] = useState<Connector | null>();
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -163,6 +175,24 @@ export const HqGsheetIntegrationContextProvider = ({
     [hqFieldsInput]
   );
 
+  const handlePreviewButtonClick = () => {
+    setStep(2);
+  };
+
+  const handleCancelButtonClick = () => {
+    setStep(0);
+    sendPostMessage("gr_complete");
+  };
+
+  const handleBackButtonClick = () => {
+    setStep(1);
+  };
+
+  const handleImportButtonClick = () => {
+    setStep(0);
+    sendPostMessage("gr_complete");
+  };
+
   useEffect(() => {
     if (accessToken && !authCode) {
       window.location.href = `https://orchestrator.grindery.org/credentials/production/googleSheets/auth?access_token=${accessToken}&redirect_uri=${window.location.href}`;
@@ -178,6 +208,8 @@ export const HqGsheetIntegrationContextProvider = ({
     }
   }, [accessToken, credentials, updateTrigger]);
 
+  console.log("trigger", trigger);
+
   return (
     <HqGsheetIntegrationContext.Provider
       value={{
@@ -185,8 +217,13 @@ export const HqGsheetIntegrationContextProvider = ({
         isAuthenticated,
         input,
         hqFieldsInput,
+        step,
         handleInputChange,
         handleHqFieldsInputChange,
+        handlePreviewButtonClick,
+        handleCancelButtonClick,
+        handleBackButtonClick,
+        handleImportButtonClick,
       }}
     >
       {children}

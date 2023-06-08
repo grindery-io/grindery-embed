@@ -19,7 +19,6 @@ function App() {
     sendPostMessage("gr_resize", {
       height: height,
     });
-    console.log("height", height);
   }, [height]);
 
   return (

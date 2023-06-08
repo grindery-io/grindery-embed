@@ -23,6 +23,8 @@ const HqGsheetIntegrationStep1 = () => {
     hqFieldsInput,
     handleInputChange,
     handleHqFieldsInputChange,
+    handlePreviewButtonClick,
+    handleCancelButtonClick,
   } = useHqGsheetIntegrationContext();
 
   return isAuthenticated && trigger ? (
@@ -166,14 +168,19 @@ const HqGsheetIntegrationStep1 = () => {
         gap="30px"
         sx={{ padding: "32px" }}
       >
+        <Button variant="contained" onClick={handleCancelButtonClick}>
+          Cancel
+        </Button>
         <Button
           variant="contained"
           fullWidth
-          onClick={() => {
-            alert(
-              JSON.stringify({ ...input, mapping: hqFieldsInput }, null, 2)
-            );
-          }}
+          onClick={handlePreviewButtonClick}
+          disabled={
+            !isAuthenticated ||
+            !input.spreadsheet ||
+            !input.worksheet ||
+            !trigger
+          }
         >
           Preview
         </Button>
