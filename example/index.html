@@ -12,7 +12,8 @@
         var message;
         if(event.data && event.data.method && event.data.method === 'gr_resize'){
           if(event.data.params && event.data.params.height){
-            document.getElementById('iframe').style.height = (event.data.params.height + 1) + 'px'
+            console.log('event.data.params.height', event.data.params.height);
+            document.getElementById('iframe').style.height = event.data.params.height + 'px'
           }
         }
         if(event.data && event.data.method && event.data.method === 'gr_complete'){

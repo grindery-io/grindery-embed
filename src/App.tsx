@@ -1,56 +1,69 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import "./App.css";
 import useContentHeight from "./hooks/useContentHeight";
 import { sendPostMessage } from "./utils/postMessages";
-import useConfig from "./hooks/useConfig";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Page from "./components/Page";
+import { Route, Routes } from "react-router-dom";
+import { CommonIntegrationPage, CustomIntegrationPage } from "./pages";
+import { useAppSelector } from "./store";
+import { selectUserStore } from "./store/slices/userSlice";
+import { Box, Button, Typography } from "@mui/material";
+import { useUserProvider } from "./providers/UserProvider";
+import { AppContainer } from "./components";
 
 function App() {
   const { height } = useContentHeight();
-  const config = useConfig();
-  const [completed, setCompleted] = useState(false);
+  const { accessToken } = useAppSelector(selectUserStore);
+  const { connectUser } = useUserProvider();
 
   useEffect(() => {
     sendPostMessage("gr_resize", {
       height: height,
     });
+    console.log("height", height);
   }, [height]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setCompleted(true);
-      sendPostMessage("gr_complete");
-    }, 10000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    if (Object.keys(config).length > 0) {
-      console.log("config", config);
-    }
-  }, [config]);
-
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path="/:triggerConnectorKey/:actionConnectorKey"
-          element={<Page />}
-        />
-        <Route
-          path="/"
-          element={
-            <div className="App">
-              <header className="App-header">
-                <h3>Grindery integration mockup</h3>
-                <p>{completed ? "Completed" : "In progress..."}</p>
-              </header>
-            </div>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+    <AppContainer>
+      {accessToken ? (
+        <Routes>
+          <Route path="/integration/*" element={<CustomIntegrationPage />} />
+          <Route
+            path="/:triggerConnectorKey/:actionConnectorKey"
+            element={<CommonIntegrationPage />}
+          />
+          <Route
+            path="/"
+            element={
+              <Box>
+                <Typography
+                  variant="h3"
+                  sx={{ textAlign: "center", padding: "36px" }}
+                >
+                  Grindery Embed App
+                </Typography>
+              </Box>
+            }
+          />
+          <Route path="*" element={<div>Page not found</div>} />
+        </Routes>
+      ) : (
+        <Box
+          sx={{
+            padding: "32px",
+            textAlign: "center",
+          }}
+        >
+          <Button
+            variant="contained"
+            onClick={() => {
+              connectUser();
+            }}
+          >
+            Connect MetaMask wallet
+          </Button>
+        </Box>
+      )}
+    </AppContainer>
   );
 }
 
