@@ -26,7 +26,7 @@ const HqGsheetIntegrationStep2 = () => {
     handleImportButtonClick,
   } = useHqGsheetIntegrationContext();
   const [selected, setSelected] = React.useState<readonly string[]>([]);
-  const rows = ["1", "2", "3", "4", "5"];
+  const rows = ["1", "2", "3", "4", "5", "6", "7", "8"];
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -48,8 +48,8 @@ const HqGsheetIntegrationStep2 = () => {
           borderBottom: "1px solid #E5E7EB",
         }}
       >
-        <TableContainer>
-          <Table>
+        <TableContainer sx={{ maxHeight: "450px" }}>
+          <Table stickyHeader>
             <TableHead>
               <TableRow>
                 <TableCell padding="checkbox">
@@ -74,7 +74,6 @@ const HqGsheetIntegrationStep2 = () => {
               {rows.map((row: string) => (
                 <TableRow
                   key={row}
-                  selected={selected.includes(row)}
                   onClick={() => {
                     if (selected.includes(row)) {
                       setSelected(selected.filter((r) => r !== row));

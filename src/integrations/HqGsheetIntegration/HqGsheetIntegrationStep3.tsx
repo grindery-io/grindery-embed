@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Loading } from "../../components";
 import { sendPostMessage } from "../../utils/postMessages";
 import { Box, Typography } from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 const HqGsheetIntegrationStep3 = () => {
   const [imported, setImported] = useState<boolean>(false);
@@ -19,10 +20,13 @@ const HqGsheetIntegrationStep3 = () => {
   ) : (
     <Box
       sx={{
-        padding: "32px",
+        padding: "150px 32px",
         textAlign: "center",
       }}
     >
+      <CheckCircleIcon
+        sx={{ fontSize: "42px", margin: "0 0 20px", color: "#344054" }}
+      />
       <Typography variant="h4">Import completed</Typography>
     </Box>
   );

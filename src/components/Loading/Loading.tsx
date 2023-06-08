@@ -22,7 +22,7 @@ const Loading = (props: Props) => {
   return (
     <Box
       sx={{
-        padding: "32px",
+        padding: "150px 32px",
         textAlign: "center",
         ...(containerStyle || {}),
       }}

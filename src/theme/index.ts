@@ -82,5 +82,27 @@ export const theme = createTheme({
         },
       },
     },
+    MuiTableCell: {
+      styleOverrides: {
+        root: {
+          padding: "22px 8px",
+          fontWeight: "300",
+          fontSize: "14px",
+          lineHeight: "24px",
+          color: "#2D2D2C",
+        },
+        head: {
+          padding: "13px 8px",
+          fontWeight: "600",
+          fontSize: "12px",
+          lineHeight: "18px",
+          color: "#777675",
+          background: "#FBFAFA",
+        },
+        paddingCheckbox: {
+          padding: "0 0 0 24px",
+        },
+      },
+    },
   },
 });

@@ -22,7 +22,7 @@ const OauthPage = () => {
   return success ? (
     <Box
       sx={{
-        padding: "32px",
+        padding: "150px 32px",
         textAlign: "center",
       }}
     >
