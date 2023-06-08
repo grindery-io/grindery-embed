@@ -41,7 +41,7 @@ const HqGsheetIntegrationStep2 = () => {
     <>
       <StepHeader
         title="Google Sheets Preview"
-        subtitle="Select the rows you would like to import"
+        subtitle={`Select the rows you would like to import (${selected.length}/${rows.length} rows selected)`}
       />
       <Box
         sx={{
