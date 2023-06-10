@@ -1,5 +1,13 @@
 import React from "react";
-import { Box, Button, SelectChangeEvent, Stack } from "@mui/material";
+import {
+  Alert,
+  AlertTitle,
+  Box,
+  Button,
+  SelectChangeEvent,
+  Skeleton,
+  Stack,
+} from "@mui/material";
 import {
   HQ_FIELDS,
   useHqGsheetIntegrationContext,
@@ -13,13 +21,15 @@ const HqGsheetIntegrationStep1 = () => {
     input,
     hqFieldsInput,
     connectionFailed,
+    connectorLoading,
+    error,
     handleInputChange,
     handleHqFieldsInputChange,
     handlePreviewButtonClick,
     handleCancelButtonClick,
   } = useHqGsheetIntegrationContext();
 
-  return isAuthenticated && trigger ? (
+  return isAuthenticated ? (
     <>
       <StepHeader
         title="Google Sheets Configuration"
@@ -35,11 +45,16 @@ const HqGsheetIntegrationStep1 = () => {
           direction="row"
           alignItems="stretch"
           justifyContent="space-between"
-          flexWrap="nowrap"
+          flexWrap="wrap"
           gap="24px"
         >
           <Stack
-            sx={{ flex: 1 }}
+            sx={{
+              width: {
+                xs: "100%",
+                md: "calc(50% - 24.5px)",
+              },
+            }}
             direction="column"
             alignItems="stretch"
             justifyContent="flex-start"
@@ -60,6 +75,7 @@ const HqGsheetIntegrationStep1 = () => {
                   )?.choices || []
                 }
                 onChange={(event: SelectChangeEvent) => {
+                  handleInputChange("worksheet", "");
                   handleInputChange("spreadsheet", event.target.value || "");
                 }}
               />
@@ -82,22 +98,38 @@ const HqGsheetIntegrationStep1 = () => {
                 }}
               />
             )}
+            {connectorLoading && (!input.spreadsheet || !input.worksheet) && (
+              <Box>
+                <Skeleton width="150px" sx={{ marginBottom: "10px" }} />
+                <Skeleton variant="rounded" height={48} />
+              </Box>
+            )}
           </Stack>
           <Box
             sx={{
               width: "1px",
               background: "#E5E7EB",
+              display: {
+                xs: "none",
+                md: "block",
+              },
             }}
           />
           <Stack
-            sx={{ flex: 1 }}
+            sx={{
+              width: {
+                xs: "100%",
+                md: "calc(50% - 24.5px)",
+              },
+            }}
             direction="column"
             alignItems="stretch"
             justifyContent="flex-start"
             flexWrap="nowrap"
             gap="24px"
           >
-            {trigger?.operation?.outputFields &&
+            {!connectorLoading &&
+              trigger?.operation?.outputFields &&
               trigger?.operation?.outputFields.length > 0 &&
               HQ_FIELDS.map((field) => (
                 <CustomSelect
@@ -120,8 +152,38 @@ const HqGsheetIntegrationStep1 = () => {
                   }}
                 />
               ))}
+            {connectorLoading &&
+              input.worksheet &&
+              input.spreadsheet &&
+              [1, 2, 3, 4, 5].map((i: number) => (
+                <Box key={`loading-${i}`}>
+                  <Skeleton width="150px" sx={{ marginBottom: "10px" }} />
+                  <Skeleton variant="rounded" height={48} />
+                </Box>
+              ))}
           </Stack>
         </Stack>
+        {error && (
+          <Box sx={{ padding: "32px 0 0" }}>
+            <Alert
+              severity="error"
+              action={
+                <Button
+                  color="inherit"
+                  size="small"
+                  onClick={() => {
+                    window.location.reload();
+                  }}
+                >
+                  RELOAD
+                </Button>
+              }
+            >
+              <AlertTitle>Error</AlertTitle>
+              {error}
+            </Alert>
+          </Box>
+        )}
       </Box>
       <Stack
         direction="row"
@@ -145,7 +207,9 @@ const HqGsheetIntegrationStep1 = () => {
             !isAuthenticated ||
             !input.spreadsheet ||
             !input.worksheet ||
-            !trigger
+            !trigger ||
+            !!error ||
+            connectorLoading
           }
         >
           Preview

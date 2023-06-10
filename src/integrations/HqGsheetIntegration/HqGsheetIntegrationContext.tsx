@@ -9,8 +9,8 @@ import { Connector } from "grindery-nexus-client/dist/types/types";
 import NexusClient from "grindery-nexus-client";
 import { useAppSelector } from "../../store";
 import { selectUserStore } from "../../store/slices/userSlice";
-import axios from "axios";
 import { sendPostMessage } from "../../utils/postMessages";
+import useOAuth2 from "../../hooks/useOAuth2";
 
 export const HQ_FIELDS = [
   {
@@ -43,6 +43,8 @@ type ContextProps = {
   hqFieldsInput: any;
   step: number;
   connectionFailed: boolean;
+  connectorLoading: boolean;
+  error: string;
   handleInputChange: (key: string, value: string) => void;
   handleHqFieldsInputChange: (key: string, value: string) => void;
   handlePreviewButtonClick: () => void;
@@ -64,6 +66,8 @@ export const HqGsheetIntegrationContext = createContext<ContextProps>({
   hqFieldsInput: {},
   step: 1,
   connectionFailed: false,
+  connectorLoading: false,
+  error: "",
   handleInputChange: () => {},
   handleHqFieldsInputChange: () => {},
   handlePreviewButtonClick: () => {},
@@ -77,13 +81,20 @@ export const HqGsheetIntegrationContextProvider = ({
 }: UserProviderProps) => {
   const [step, setStep] = useState<number>(1);
   const [gsheetConnector, setGsheetConnector] = useState<Connector | null>();
-  const [authCode, setAuthCode] = useState<string | null>(null);
   const { accessToken } = useAppSelector(selectUserStore);
-  const [credentials, setCredentials] = useState<any>(null);
+  const {
+    isConnected: isAuthenticated,
+    credentials,
+    connectionFailed,
+  } = useOAuth2({
+    accessToken,
+    connectorKey: "googleSheets",
+  });
+  const [connectorLoading, setConnectorLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
   const [input, setInput] = useState<any>({});
   const [hqFieldsInput, setHqFieldsInput] = useState<any>({});
   const [updatedTrigger, setUpdatedTrigger] = useState<any>(null);
-  const [connectionFailed, setConnectionFailed] = useState<boolean>(false);
   const gsheetTrigger = gsheetConnector?.triggers?.find(
     (trig: any) => trig.key === "newSpreadsheetRow"
   );
@@ -107,52 +118,53 @@ export const HqGsheetIntegrationContextProvider = ({
       }
     : null;
 
-  const isAuthenticated = accessToken && credentials?.token;
-
   const getGsheetConnector = async () => {
-    const client = new NexusClient();
-    const connector = await client.connector.get({ driverKey: "googleSheets" });
-    setGsheetConnector(connector || null);
+    try {
+      const client = new NexusClient();
+      const connector = await client.connector.get({
+        driverKey: "googleSheets",
+      });
+      setGsheetConnector(connector || null);
+    } catch (error: any) {
+      setError("Connector error. Please reload the page, any try again.");
+    }
   };
 
-  const getGsheetCredentials = useCallback(async () => {
-    if (accessToken && authCode) {
-      const res = await axios
-        .post(
-          "https://orchestrator.grindery.org/credentials/auth/complete",
-          { code: authCode },
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken || ""}`,
-            },
-          }
-        )
-        .catch(() => {
-          // handle error
-        });
-      if (res && res.data) {
-        setCredentials(res.data || null);
-      }
-    }
-  }, [accessToken, authCode]);
-
   const updateTrigger = useCallback(async () => {
-    const client = new NexusClient(accessToken);
-    const trig = await client.connector.callInputProvider({
-      connectorKey: "googleSheets",
-      operationKey: "newSpreadsheetRow",
-      body: {
-        jsonrpc: "2.0",
-        method: "grinderyNexusConnectorUpdateFields",
-        id: new Date(),
-        params: {
-          key: "newSpreadsheetRow",
-          fieldData: input,
-          authentication: credentials.token,
+    setConnectorLoading(true);
+    try {
+      const client = new NexusClient(accessToken);
+      const fieldsData = { ...input };
+      if (!fieldsData.spreadsheet) {
+        delete fieldsData.spreadsheet;
+      }
+      if (!fieldsData.worksheet) {
+        delete fieldsData.worksheet;
+      }
+      const trig = await client.connector.callInputProvider({
+        connectorKey: "googleSheets",
+        operationKey: "newSpreadsheetRow",
+        body: {
+          jsonrpc: "2.0",
+          method: "grinderyNexusConnectorUpdateFields",
+          id: new Date(),
+          params: {
+            key: "newSpreadsheetRow",
+            fieldData: fieldsData,
+            authentication: credentials.token,
+          },
         },
-      },
-    });
-    setUpdatedTrigger(trig);
+      });
+      if (trig) {
+        setUpdatedTrigger(trig);
+      } else {
+        setError("Connector error. Please reload the page, any try again.");
+      }
+    } catch (error: any) {
+      setError("Connector error. Please reload the page, any try again.");
+    }
+
+    setConnectorLoading(false);
   }, [accessToken, credentials, input]);
 
   const handleInputChange = useCallback(
@@ -193,48 +205,14 @@ export const HqGsheetIntegrationContextProvider = ({
   };
 
   useEffect(() => {
-    function handleMessage(event: any) {
-      if (
-        event.data &&
-        event.data.method === "gr_authCode" &&
-        event.data.params &&
-        event.data.params.authCode
-      ) {
-        setAuthCode(event.data.params.authCode);
-      }
-    }
-
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
+    getGsheetConnector();
   }, []);
-
-  useEffect(() => {
-    if (accessToken && !authCode) {
-      window.open(
-        `https://orchestrator.grindery.org/credentials/production/googleSheets/auth?access_token=${accessToken}&redirect_uri=${window.location.origin}/oauth`
-      );
-    }
-  }, [accessToken, authCode]);
-
-  useEffect(() => {
-    if (accessToken && authCode) {
-      getGsheetConnector();
-      getGsheetCredentials();
-    }
-  }, [accessToken, authCode, getGsheetCredentials]);
 
   useEffect(() => {
     if (accessToken && credentials && credentials.token) {
       updateTrigger();
     }
   }, [accessToken, credentials, updateTrigger]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setConnectionFailed(true);
-    }, 60000);
-    return () => clearTimeout(timer);
-  }, []);
 
   return (
     <HqGsheetIntegrationContext.Provider
@@ -245,6 +223,8 @@ export const HqGsheetIntegrationContextProvider = ({
         hqFieldsInput,
         step,
         connectionFailed,
+        connectorLoading,
+        error,
         handleInputChange,
         handleHqFieldsInputChange,
         handlePreviewButtonClick,
