@@ -548,14 +548,16 @@ export const WorkflowContextProvider = ({
   }, [key]);
 
   useEffect(() => {
-    const getChains = async () => {
-      const res = await client?.chain.list({ type: "evm" });
-      if (res) {
-        setChains(res);
-      }
-    };
-    getChains();
-  }, []);
+    if (client?.chain) {
+      const getChains = async () => {
+        const res = await client?.chain.list({ type: "evm" });
+        if (res) {
+          setChains(res);
+        }
+      };
+      getChains();
+    }
+  }, [client?.chain]);
 
   console.log("workflow", workflow);
 

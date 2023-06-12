@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import _ from "lodash";
-import { IconButton, Menu } from "grindery-ui";
+//import { IconButton, Menu } from "grindery-ui";
 import { useWorkflowStepContext } from "./WorkflowStepContext";
 import { useWorkflowContext } from "./WorkflowContext";
 import { Workflow } from "../types/Workflow";
@@ -79,7 +79,7 @@ const Description = styled.p`
   padding: 0;
 `;
 
-const ChangeButton = styled.button`
+/*const ChangeButton = styled.button`
   background: #ffffff;
   border: 1px solid #0b0d17;
   border-radius: 5px;
@@ -106,7 +106,7 @@ const MenuButtonWrapper = styled.div`
     display: block;
   }
 `;
-
+*/
 const MenuItem = styled.div`
   display: flex;
   flex-direction: row;
@@ -122,17 +122,17 @@ const StepHeader = (props: Props) => {
   const {
     type,
     step,
-    setActiveRow,
+    //setActiveRow,
     connector,
     operation,
     operationIsConfigured,
     operationIsAuthenticated,
-    setConnector,
-    setOperationIsTested,
+    //setConnector,
+    //setOperationIsTested,
   } = useWorkflowStepContext();
-  const { activeStep, setActiveStep, updateWorkflow, workflow, setWorkflow } =
+  const { activeStep, setActiveStep, workflow, setWorkflow } =
     useWorkflowContext();
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  //const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const index = step - 2;
 
@@ -149,7 +149,7 @@ const StepHeader = (props: Props) => {
     }
   };
 
-  const handleChangeClick = () => {
+  /*const handleChangeClick = () => {
     if (type === "trigger") {
       updateWorkflow({
         "trigger.connector": "",
@@ -172,16 +172,16 @@ const StepHeader = (props: Props) => {
     setActiveRow(0);
     setConnector(null);
     setOperationIsTested(false);
-  };
+  };*/
 
-  const handleMenuClose = () => {
+  /*const handleMenuClose = () => {
     setAnchorEl(null);
   };
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
-  };
+  };*/
 
   const handleRemove = () => {
     setWorkflow((_workflow: Workflow) => {

@@ -1,10 +1,10 @@
 import React from "react";
-import styled from "styled-components";
+//import styled from "styled-components";
 import StepsDivider from "./StepsDivider";
-import { useWorkflowContext } from "./WorkflowContext";
-import AddStep from "../components/icons/AddStep";
+//import { useWorkflowContext } from "./WorkflowContext";
+//import AddStep from "../components/icons/AddStep";
 
-const Button = styled.button`
+/*const Button = styled.button`
   background: none;
   border: none;
   box-shadow: none;
@@ -30,19 +30,19 @@ const Button = styled.button`
   &:hover svg rect {
     stroke: #8c30f5 !important;
   }
-`;
+`;*/
 
 type Props = {
   prevStep: number;
 };
 
 const AddActionButton = (props: Props) => {
-  const { prevStep } = props;
-  const { workflow, setActiveStep, setWorkflow } = useWorkflowContext();
+  //const { prevStep } = props;
+  //const { workflow, setActiveStep, setWorkflow } = useWorkflowContext();
 
-  const newIndex = prevStep - 1;
+  //const newIndex = prevStep - 1;
 
-  const handleClick = () => {
+  /*const handleClick = () => {
     const currentWorkflow = { ...workflow };
     const currentActions = currentWorkflow.actions;
     const newActions = [
@@ -57,7 +57,7 @@ const AddActionButton = (props: Props) => {
     ];
     setWorkflow({ ...currentWorkflow, actions: newActions });
     setActiveStep(prevStep + 1);
-  };
+  };*/
 
   return (
     <>
