@@ -27,6 +27,10 @@ const WorkflowBuilder = (props: Props) => {
   // workflow steps output
   const [outputFields, setOutputFields] = useState<any[]>([]);
 
+  //const queryString = window.location.search;
+  //const urlParams = new URLSearchParams(queryString);
+  //  const triggerHidden = urlParams.get("trigger.hidden");
+
   return (
     <Wrapper>
       <WorkflowStepContextProvider

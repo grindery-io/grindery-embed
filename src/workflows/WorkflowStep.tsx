@@ -38,7 +38,8 @@ const WorkflowStep = ({ outputFields }: Props) => {
   const urlParams = new URLSearchParams(queryString);
   const actionParam = urlParams.get("action");
   const triggerParam = urlParams.get("trigger");
-
+  const triggerHidden = urlParams.get("trigger.hidden");
+  const actionHidden = urlParams.get("action.hidden");
   return (
     <>
       {type === "action" ? <StepsDivider height={16} /> : null}
@@ -60,7 +61,12 @@ const WorkflowStep = ({ outputFields }: Props) => {
               {operation && <StepAuthentication />}
 
               {operation && operationIsAuthenticated && (
-                <StepInput outputFields={outputFields} />
+                <>
+                  {((type === "trigger" && triggerHidden !== "1") ||
+                    (type === "action" && actionHidden !== "1")) && (
+                    <StepInput outputFields={outputFields} />
+                  )}
+                </>
               )}
               {/*<StepTest outputFields={outputFields} />*/}
             </>
