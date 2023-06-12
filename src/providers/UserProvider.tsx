@@ -21,7 +21,7 @@ export const UserContext = createContext<ContextProps>({
 });
 
 export const UserProvider = ({ children }: UserProviderProps) => {
-  const { connect, disconnect, token } = useGrinderyNexus();
+  const { connect, disconnect, token, user } = useGrinderyNexus();
   const dispatch = useAppDispatch();
 
   const connectUser = () => {
@@ -35,6 +35,10 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   useEffect(() => {
     dispatch(userStoreActions.setAccessToken(token?.access_token || ""));
   }, [token?.access_token, dispatch]);
+
+  useEffect(() => {
+    dispatch(userStoreActions.setUserId(user || ""));
+  }, [user, dispatch]);
 
   return (
     <UserContext.Provider

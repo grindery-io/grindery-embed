@@ -134,8 +134,7 @@ export const WorkflowContextProvider = ({
     user,
   } = useAppContext();*/
 
-  const user = "";
-  const { accessToken } = useAppSelector(selectUserStore);
+  const { userId: user, accessToken } = useAppSelector(selectUserStore);
   const workflows: Workflow[] = [];
   const client = new NexusClient(accessToken);
   const [chains, setChains] = useState<any[]>([]);
@@ -155,11 +154,17 @@ export const WorkflowContextProvider = ({
       ?.find((t: Trigger) => t.key === triggerParam)
       ?.operation?.inputFields?.map((f: Field) => f.key) || [];
   const triggerDefaultInput: any = {};
-  console.log("triggerInputKeys", triggerInputKeys);
-  console.log("triggerConnectorProp", triggerConnectorProp);
-
   for (const key of triggerInputKeys) {
     triggerDefaultInput[key] = urlParams.get("trigger.input." + key) || "";
+  }
+
+  const actionInputKeys =
+    actionConnectorProp.actions
+      ?.find((a: Action) => a.key === actionParam)
+      ?.operation?.inputFields?.map((f: Field) => f.key) || [];
+  const actionDefaultInput: any = {};
+  for (const key of actionInputKeys) {
+    actionDefaultInput[key] = urlParams.get("action.input." + key) || "";
   }
 
   // loaded nexus connectors CDS
@@ -179,11 +184,11 @@ export const WorkflowContextProvider = ({
         type: "action",
         connector: actionConnectorProp.key || "",
         operation: actionOperation,
-        input: {},
+        input: actionDefaultInput,
       },
     ],
     creator: user || "",
-    state: "off",
+    state: "on",
     source: "urn:grindery:embed",
   });
 
@@ -548,16 +553,15 @@ export const WorkflowContextProvider = ({
   }, [key]);
 
   useEffect(() => {
-    if (client?.chain) {
-      const getChains = async () => {
-        const res = await client?.chain.list({ type: "evm" });
-        if (res) {
-          setChains(res);
-        }
-      };
-      getChains();
-    }
-  }, [client?.chain]);
+    const getChains = async () => {
+      const res = await client?.chain.list({ type: "evm" });
+      if (res) {
+        setChains(res);
+      }
+    };
+    getChains();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   console.log("workflow", workflow);
 

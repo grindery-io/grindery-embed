@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useParams } from "react-router";
 import { useWorkflowContext } from "./WorkflowContext";
 import { Button, Snackbar } from "@mui/material";
+import StepsDivider from "./StepsDivider";
 
 type Props = {};
 
@@ -50,7 +51,21 @@ const WorkflowSave = (props: Props) => {
 
   return (
     <>
-      <Button color="primary" disabled={loading} onClick={handleClick}>
+      <StepsDivider height={16} />
+      <Button
+        sx={{
+          margin: 0,
+          background: "black",
+          color: "white",
+          "&:hover": {
+            background: "black",
+            color: "white",
+          },
+        }}
+        color="primary"
+        disabled={loading}
+        onClick={handleClick}
+      >
         Save workflow
       </Button>
       <Snackbar
