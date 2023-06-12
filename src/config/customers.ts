@@ -1,4 +1,4 @@
-import { HqGsheetIntegration } from "../integrations";
+import { HqGsheetIntegration } from "../custom-integrations";
 
 export const CUSTOMERS: {
   [key: string]: {
