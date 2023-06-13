@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import NexusClient from "grindery-nexus-client";
+import GrinderyClient from "grindery-nexus-client";
 import { useParams } from "react-router";
 import { ThemeProvider } from "grindery-ui";
 import WorkflowContextProvider from "../../workflows/WorkflowContext";
@@ -16,8 +16,14 @@ const CommonIntegrationPage = () => {
     null
   );
 
+  const testClient = () => {
+    const client = new GrinderyClient();
+    console.log("client", client);
+  };
+
   const getConnector = async (connectorKey: string, type: string) => {
-    const client = new NexusClient();
+    const client = new GrinderyClient();
+
     const connectorsRes = await client.connector.get({
       driverKey: connectorKey,
       enrich: true,
@@ -40,6 +46,10 @@ const CommonIntegrationPage = () => {
       getConnector(actionConnectorKey, "action");
     }
   }, [triggerConnectorKey, actionConnectorKey]);
+
+  useEffect(() => {
+    testClient();
+  }, []);
 
   return triggerConnector && actionConnector ? (
     <ThemeProvider>

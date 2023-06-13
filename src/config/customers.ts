@@ -1,4 +1,8 @@
-import { HqGsheetIntegration } from "../custom-integrations";
+import {
+  HqGsheetIntegration,
+  SafeGsheetIntegration,
+} from "../custom-integrations";
+import SafeSlackIntegration from "../custom-integrations/SafeSlackIntegration/SafeSlackIntegration";
 
 export const CUSTOMERS: {
   [key: string]: {
@@ -15,6 +19,17 @@ export const CUSTOMERS: {
     integrations: {
       gsheet: {
         Component: HqGsheetIntegration,
+      },
+    },
+  },
+  safe: {
+    name: "Safe",
+    integrations: {
+      gsheet: {
+        Component: SafeGsheetIntegration,
+      },
+      slack: {
+        Component: SafeSlackIntegration,
       },
     },
   },
