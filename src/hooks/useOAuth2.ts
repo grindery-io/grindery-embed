@@ -4,10 +4,11 @@ import axios from "axios";
 type UseOAuth2Props = {
   accessToken: string;
   connectorKey?: string;
+  authenticated?: boolean;
 };
 
 const useOAuth2 = (props: UseOAuth2Props) => {
-  const { accessToken, connectorKey } = props;
+  const { accessToken, connectorKey, authenticated } = props;
   const [authCode, setAuthCode] = useState<string | null>(null);
   const [credentials, setCredentials] = useState<any>(null);
   const [connectionFailed, setConnectionFailed] = useState<boolean>(false);
@@ -52,12 +53,12 @@ const useOAuth2 = (props: UseOAuth2Props) => {
   }, []);
 
   useEffect(() => {
-    if (accessToken && !authCode) {
+    if (accessToken && !authCode && !authenticated) {
       window.open(
         `https://orchestrator.grindery.org/credentials/production/${connectorKey}/auth?access_token=${accessToken}&redirect_uri=${window.location.origin}/oauth`
       );
     }
-  }, [accessToken, authCode, connectorKey]);
+  }, [accessToken, authCode, connectorKey, authenticated]);
 
   useEffect(() => {
     if (accessToken && authCode) {

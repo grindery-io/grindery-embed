@@ -1,6 +1,8 @@
 import React from "react";
 import { useSafeSlackIntegrationContext } from "./SafeSlackIntegrationContext";
 import SafeSlackIntegrationStep1 from "./SafeSlackIntegrationStep1";
+import SafeSlackIntegrationStep2 from "./SafeSlackIntegrationStep2";
+import SafeSlackIntegrationStep3 from "./SafeSlackIntegrationStep3";
 
 type Props = {};
 
@@ -13,9 +15,9 @@ const SafeSlackIntegrationSteps = (props: Props) => {
     case 1:
       return <SafeSlackIntegrationStep1 />;
     case 2:
-      return null;
+      return <SafeSlackIntegrationStep2 />;
     case 3:
-      return null;
+      return <SafeSlackIntegrationStep3 />;
     default:
       return null;
   }

@@ -12,36 +12,36 @@ import { useAppSelector } from "../../store";
 import { selectUserStore } from "../../store/slices/userSlice";
 import { Field } from "../../types/Connector";
 
-const SafeSlackIntegrationStep1 = () => {
+const SafeSlackIntegrationStep2 = () => {
   const { accessToken } = useAppSelector(selectUserStore);
   const {
-    trigger,
+    action,
     connectorLoading,
     error,
-    triggerInput,
-    safeCredentials,
+    actionInput,
+    slackCredentials,
     chains,
-    handleCancelButtonClick,
-    handleNextButtonClick,
+    handleBackButtonClick,
+    handleSaveButtonClick,
     handleCredentialsChange,
-    handleTriggerInputChange,
+    handleActionInputChange,
   } = useSafeSlackIntegrationContext();
 
   const { credentials, connectionFailed } = useOAuth2({
     accessToken,
-    connectorKey: "safe",
-    authenticated: !!safeCredentials,
+    connectorKey: "slack",
+    authenticated: !!slackCredentials,
   });
 
   useEffect(() => {
     if (credentials) {
-      handleCredentialsChange("safe", credentials);
+      handleCredentialsChange("slack", credentials);
     }
   }, [credentials, handleCredentialsChange]);
 
-  return safeCredentials ? (
+  return slackCredentials ? (
     <>
-      <StepHeader title="Safe configuration" subtitle="Select something" />
+      <StepHeader title="Slack configuration" subtitle="Select something" />
       <Box
         sx={{
           padding: "32px",
@@ -55,7 +55,7 @@ const SafeSlackIntegrationStep1 = () => {
           flexWrap="nowrap"
           gap="24px"
         >
-          {trigger?.operation?.inputFields?.map((field: Field) => {
+          {action?.operation?.inputFields?.map((field: Field) => {
             if (
               (field.choices && field.choices.length > 0) ||
               field.key === "_grinderyChain"
@@ -76,9 +76,9 @@ const SafeSlackIntegrationStep1 = () => {
                           label: choice.label,
                         })) || []
                   }
-                  value={triggerInput[field.key] || ""}
+                  value={actionInput[field.key] || ""}
                   onChange={(event) => {
-                    handleTriggerInputChange(field.key, event.target.value);
+                    handleActionInputChange(field.key, event.target.value);
                   }}
                 />
               );
@@ -88,9 +88,9 @@ const SafeSlackIntegrationStep1 = () => {
                   label={field.label || ""}
                   name={field.key}
                   placeholder={field.placeholder}
-                  value={triggerInput[field.key] || ""}
+                  value={actionInput[field.key] || ""}
                   onChange={(event) => {
-                    handleTriggerInputChange(field.key, event.target.value);
+                    handleActionInputChange(field.key, event.target.value);
                   }}
                 />
               );
@@ -128,32 +128,32 @@ const SafeSlackIntegrationStep1 = () => {
       >
         <Button
           variant="contained"
-          onClick={handleCancelButtonClick}
+          onClick={handleBackButtonClick}
           color="secondary"
         >
-          Cancel
+          Back
         </Button>
         <Button
           variant="contained"
           fullWidth
-          onClick={handleNextButtonClick}
-          disabled={!safeCredentials || !trigger || !!error || connectorLoading}
+          onClick={handleSaveButtonClick}
+          disabled={!slackCredentials || !action || !!error || connectorLoading}
         >
-          Next
+          Save
         </Button>
       </Stack>
     </>
   ) : (
     <Loading
-      title="Connecting to Safe..."
+      title="Connecting to Slack..."
       subtitle={
         connectionFailed
           ? "This is taking longer than expected, please wait\na few more moments, or"
-          : "Allow popup windows in your browser\nto connect to Safe"
+          : "Allow popup windows in your browser\nto connect to Slack"
       }
       tryAgain={connectionFailed}
     />
   );
 };
 
-export default SafeSlackIntegrationStep1;
+export default SafeSlackIntegrationStep2;

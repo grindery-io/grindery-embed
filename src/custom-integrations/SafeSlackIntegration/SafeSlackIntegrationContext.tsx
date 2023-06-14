@@ -21,12 +21,16 @@ type ContextProps = {
   step: number;
   connectorLoading: boolean;
   error: string;
+  safeCredentials: any;
+  slackCredentials: any;
+  chains: any[];
   handleTriggerInputChange: (key: string, value: string) => void;
   handleActionInputChange: (key: string, value: string) => void;
   handleCredentialsChange: (connectorKey: string, credentials: any) => void;
   handleCancelButtonClick: () => void;
   handleNextButtonClick: () => void;
   handleSaveButtonClick: () => void;
+  handleBackButtonClick: () => void;
 };
 
 // Context provider props
@@ -43,12 +47,16 @@ export const SafeSlackIntegrationContext = createContext<ContextProps>({
   step: 1,
   connectorLoading: false,
   error: "",
+  safeCredentials: null,
+  slackCredentials: null,
+  chains: [],
   handleTriggerInputChange: () => {},
   handleActionInputChange: () => {},
   handleCredentialsChange: () => {},
   handleCancelButtonClick: () => {},
   handleNextButtonClick: () => {},
   handleSaveButtonClick: () => {},
+  handleBackButtonClick: () => {},
 });
 
 export const SafeSlackIntegrationContextProvider = ({
@@ -64,8 +72,6 @@ export const SafeSlackIntegrationContextProvider = ({
   const [actionInput, setActionInput] = useState<any>({});
   const [updatedAction, setUpdatedAction] = useState<any>(null);
   const [safeCredentials, setSafeCredentials] = useState<any>(null);
-  console.log("safeCredentials", safeCredentials);
-
   const [slackCredentials, setSlackCredentials] = useState<any>(null);
   const safeTrigger = safe?.triggers?.find(
     (t: Trigger) => t.key === "safeTransactionExecutedTransferNative"
@@ -74,6 +80,7 @@ export const SafeSlackIntegrationContextProvider = ({
     (a: Action) => a.key === "sendChannelMessage"
   );
   const trigger = safeTrigger || null;
+  const [chains, setChains] = useState<any[]>([]);
 
   const action = slackAction
     ? {
@@ -154,6 +161,10 @@ export const SafeSlackIntegrationContextProvider = ({
     sendPostMessage("gr_complete");
   };
 
+  const handleBackButtonClick = () => {
+    setStep(1);
+  };
+
   const handleNextButtonClick = () => {
     setStep(2);
   };
@@ -193,10 +204,17 @@ export const SafeSlackIntegrationContextProvider = ({
     setConnectorLoading(false);
   }, [accessToken, slackCredentials, actionInput]);
 
+  const getChains = useCallback(async () => {
+    const client = new NexusClient();
+    const chains = await client.chain.list({ type: "evm" });
+    setChains(chains || []);
+  }, []);
+
   useEffect(() => {
     getSafe();
     getSlack();
-  }, []);
+    getChains();
+  }, [getChains]);
 
   useEffect(() => {
     if (accessToken && slackCredentials && slackCredentials.token) {
@@ -214,12 +232,16 @@ export const SafeSlackIntegrationContextProvider = ({
         step,
         connectorLoading,
         error,
+        safeCredentials,
+        slackCredentials,
+        chains,
         handleTriggerInputChange,
         handleActionInputChange,
         handleCredentialsChange,
         handleCancelButtonClick,
         handleNextButtonClick,
         handleSaveButtonClick,
+        handleBackButtonClick,
       }}
     >
       {children}
