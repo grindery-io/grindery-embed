@@ -467,8 +467,7 @@ export const WorkflowContextProvider = ({
       (action, i) =>
         workflow.system?.actions[i]?.selected &&
         workflow.system?.actions[i]?.authenticated &&
-        workflow.system?.actions[i]?.configured &&
-        workflow.system?.actions[i]?.tested
+        workflow.system?.actions[i]?.configured
     ).length === workflow.actions.length;
 
   // update current workflow

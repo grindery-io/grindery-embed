@@ -57,13 +57,19 @@ const WorkflowSave = (props: Props) => {
           margin: 0,
           background: "black",
           color: "white",
+          cursor: "pointer",
           "&:hover": {
             background: "black",
             color: "white",
           },
+          "&.Mui-disabled": {
+            color: "white",
+            opacity: "0.5",
+            cursor: "not-allowed",
+          },
         }}
         color="primary"
-        disabled={loading}
+        disabled={!workflowReadyToSave || loading}
         onClick={handleClick}
       >
         Save workflow
