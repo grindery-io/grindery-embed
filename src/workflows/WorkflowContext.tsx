@@ -13,6 +13,7 @@ import {
 } from "../types/Connector";
 import { useAppSelector } from "../store";
 import { selectUserStore } from "../store/slices/userSlice";
+import { sendPostMessage } from "../utils/postMessages";
 
 // empty workflow declaration
 const blankWorkflow: Workflow = {
@@ -43,6 +44,7 @@ type WorkflowContextProps = {
   loading: boolean;
   error?: string | null;
   success: string | null;
+  saved: boolean;
   setActiveStep: (a: any) => void;
   setLoading: (a: boolean) => void;
   setError: (a: string) => void;
@@ -88,6 +90,7 @@ export const WorkflowContext = createContext<WorkflowContextProps>({
   activeStep: 1,
   loading: false,
   success: null,
+  saved: false,
   setActiveStep: () => {},
   setWorkflow: () => {},
   saveWorkflow: () => {},
@@ -203,6 +206,9 @@ export const WorkflowContextProvider = ({
 
   // active workflow builde step
   const [activeStep, setActiveStep] = useState<string | number>(1);
+
+  // is workflow saved
+  const [saved, setSaved] = useState(false);
 
   // filter connectors that has triggers
   const connectorsWithTriggers = connectors.filter(
@@ -501,9 +507,13 @@ export const WorkflowContextProvider = ({
 
   const saveWorkflow = async (callback?: () => void) => {
     if (workflow) {
+      const renamedWorkflow = { ...workflow };
+      renamedWorkflow.title = `${triggers.triggerConnector?.name} -> ${
+        actions.actionConnector(0)?.name
+      } Embedded Integration`;
       const readyWorkflow = {
-        ...workflow,
-        signature: JSON.stringify(workflow),
+        ...renamedWorkflow,
+        signature: JSON.stringify(renamedWorkflow),
       };
       delete readyWorkflow.system;
       setError(null);
@@ -511,10 +521,13 @@ export const WorkflowContextProvider = ({
       setLoading(true);
       try {
         await client?.workflow.create({ workflow: readyWorkflow });
+        setSaved(true);
+        sendPostMessage("gr_complete");
       } catch (error: any) {
+        setSaved(false);
+        setError("Workflow saving error. Please try again.");
         console.error("createWorkflow error:", error.message);
       }
-
       setLoading(false);
     }
   };
@@ -574,6 +587,7 @@ export const WorkflowContextProvider = ({
         loading,
         error,
         success,
+        saved,
         setActiveStep,
         setWorkflow,
         saveWorkflow,

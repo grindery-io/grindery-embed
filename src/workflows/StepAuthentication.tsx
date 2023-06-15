@@ -7,7 +7,6 @@ import { useWorkflowStepContext } from "./WorkflowStepContext";
 import { useWorkflowContext } from "./WorkflowContext";
 import { jsonrpcObj } from "../utils/jsonRpc";
 import { ICONS } from "../config";
-import { getParameterByName } from "../utils/getParameterByName";
 import { useAppSelector } from "../store";
 import { selectUserStore } from "../store/slices/userSlice";
 
@@ -130,45 +129,45 @@ const StepAuthentication = (props: Props) => {
   };
 
   const receiveMessage = (e: any) => {
-    if (e.origin === window.location.origin) {
-      const { data } = e;
+    if (
+      e.data &&
+      e.data.method === "gr_authCode" &&
+      e.data.params &&
+      e.data.params.authCode
+    ) {
+      const code = e.data.params.authCode;
 
-      if (data.gr_url) {
-        const codeParam = getParameterByName("code", data.gr_url);
-
-        if (
-          connector &&
-          connector.authentication &&
-          connector.authentication.type &&
-          connector.authentication.type === "oauth2" &&
-          codeParam
-        ) {
-          const data = {
-            code: codeParam,
-            //redirect_uri: window.location.origin + "/auth",
-          };
-          axios({
-            method: "POST",
-            url: GET_OAUTH_TOKEN_ENDPOINT,
-            headers: {
-              Authorization: `Bearer ${workspaceToken || access_token}`,
-            },
-            data,
+      if (
+        connector &&
+        connector.authentication &&
+        connector.authentication.type &&
+        connector.authentication.type === "oauth2" &&
+        code
+      ) {
+        const data = {
+          code: code,
+        };
+        axios({
+          method: "POST",
+          url: GET_OAUTH_TOKEN_ENDPOINT,
+          headers: {
+            Authorization: `Bearer ${workspaceToken || access_token}`,
+          },
+          data,
+        })
+          .then((res) => {
+            if (res && res.data) {
+              const credentials = res.data;
+              setAuth(credentials, true);
+            }
           })
-            .then((res) => {
-              if (res && res.data) {
-                const credentials = res.data;
-                setAuth(credentials, true);
-              }
-            })
-            .catch((err) => {
-              console.error("getAccessTokenRequest err", err);
-            });
-        }
-
-        e.source.postMessage({ gr_close: true }, window.location.origin);
-        window.removeEventListener("message", receiveMessage, false);
+          .catch((err) => {
+            console.error("getAccessTokenRequest err", err);
+          });
       }
+
+      e.source.postMessage({ gr_close: true }, window.location.origin);
+      window.removeEventListener("message", receiveMessage, false);
     }
   };
 
@@ -189,29 +188,16 @@ const StepAuthentication = (props: Props) => {
     setOperationIsTested(false);
     if (connector?.authentication?.type === "oauth2") {
       window.removeEventListener("message", receiveMessage, false);
-      const width = 375,
-        height = 500,
-        left = window.screen.width / 2 - width / 2,
-        top = window.screen.height / 2 - height / 2;
 
-      let windowObjectReference = window.open(
-        `${AUTH_ENDPOINT}/${connector.key}/auth?access_token=${access_token}&redirect_uri=${window.location.origin}/auth`,
-        "_blank",
-        "status=no, toolbar=no, menubar=no, width=" +
-          width +
-          ", height=" +
-          height +
-          ", top=" +
-          top +
-          ", left=" +
-          left
+      window.open(
+        `${AUTH_ENDPOINT}/${connector.key}/auth?access_token=${access_token}&redirect_uri=${window.location.origin}/oauth`
       );
-      windowObjectReference?.focus();
+
       window.addEventListener("message", receiveMessage, false);
     }
   };
 
-  const updateFieldsDefinition = () => {
+  const updateFieldsDefinition = (newToken?: string) => {
     if (operation?.operation?.inputFieldProviderUrl) {
       if (workflow) {
         setLoading(true);
@@ -225,7 +211,7 @@ const StepAuthentication = (props: Props) => {
                 (type === "trigger"
                   ? workflow.trigger.input
                   : workflow.actions[index].input) || {},
-              authentication: token,
+              authentication: newToken || token || "",
             }),
           })
           .then((res) => {
@@ -335,27 +321,27 @@ const StepAuthentication = (props: Props) => {
         ["actions[" + index + "].authenticationKey"]: credentials.key,
       });
     }
-    updateFieldsDefinition();
+    updateFieldsDefinition(credentials.token);
   };
 
   const handleCredentialsChange = (value: string) => {
+    const newToken =
+      savedCredentials.find((c) => c.key === value)?.token || value;
     if (type === "trigger") {
       updateWorkflow({
-        "trigger.authentication":
-          savedCredentials.find((c) => c.key === value)?.token || value,
+        "trigger.authentication": newToken,
         "trigger.authenticationKey": value,
         "trigger.input": {},
       });
     } else {
       updateWorkflow({
-        ["actions[" + index + "].authentication"]:
-          savedCredentials.find((c) => c.key === value)?.token || value,
+        ["actions[" + index + "].authentication"]: newToken,
         ["actions[" + index + "].authenticationKey"]: value,
         ["actions[" + index + "].input"]: {},
       });
     }
     setOperationIsTested(false);
-    updateFieldsDefinition();
+    updateFieldsDefinition(newToken);
   };
 
   useEffect(() => {

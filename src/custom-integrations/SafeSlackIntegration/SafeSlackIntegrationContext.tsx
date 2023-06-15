@@ -11,6 +11,7 @@ import { useAppSelector } from "../../store";
 import { selectUserStore } from "../../store/slices/userSlice";
 import { sendPostMessage } from "../../utils/postMessages";
 import { Action, Trigger } from "../../types/Connector";
+import { Workflow } from "../../types/Workflow";
 
 // Context props
 type ContextProps = {
@@ -24,6 +25,7 @@ type ContextProps = {
   safeCredentials: any;
   slackCredentials: any;
   chains: any[];
+  saving: boolean;
   handleTriggerInputChange: (key: string, value: string) => void;
   handleActionInputChange: (key: string, value: string) => void;
   handleCredentialsChange: (connectorKey: string, credentials: any) => void;
@@ -31,6 +33,7 @@ type ContextProps = {
   handleNextButtonClick: () => void;
   handleSaveButtonClick: () => void;
   handleBackButtonClick: () => void;
+  saveWorkflow: () => void;
 };
 
 // Context provider props
@@ -50,6 +53,7 @@ export const SafeSlackIntegrationContext = createContext<ContextProps>({
   safeCredentials: null,
   slackCredentials: null,
   chains: [],
+  saving: false,
   handleTriggerInputChange: () => {},
   handleActionInputChange: () => {},
   handleCredentialsChange: () => {},
@@ -57,6 +61,7 @@ export const SafeSlackIntegrationContext = createContext<ContextProps>({
   handleNextButtonClick: () => {},
   handleSaveButtonClick: () => {},
   handleBackButtonClick: () => {},
+  saveWorkflow: () => {},
 });
 
 export const SafeSlackIntegrationContextProvider = ({
@@ -65,7 +70,7 @@ export const SafeSlackIntegrationContextProvider = ({
   const [step, setStep] = useState<number>(1);
   const [safe, setSafe] = useState<Connector | null>();
   const [slack, setSlack] = useState<Connector | null>();
-  const { accessToken } = useAppSelector(selectUserStore);
+  const { userId, accessToken } = useAppSelector(selectUserStore);
   const [connectorLoading, setConnectorLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [triggerInput, setTriggerInput] = useState<any>({});
@@ -81,6 +86,7 @@ export const SafeSlackIntegrationContextProvider = ({
   );
   const trigger = safeTrigger || null;
   const [chains, setChains] = useState<any[]>([]);
+  const [saving, setSaving] = useState<boolean>(false);
 
   const action = slackAction
     ? {
@@ -156,6 +162,59 @@ export const SafeSlackIntegrationContextProvider = ({
     [actionInput]
   );
 
+  const saveWorkflow = async () => {
+    if (
+      safe &&
+      slack &&
+      trigger &&
+      action &&
+      userId &&
+      accessToken &&
+      safeCredentials &&
+      slackCredentials
+    ) {
+      setSaving(true);
+      const workflow: Workflow = {
+        state: "on",
+        title: "Safe Slack Embedded Integration",
+        creator: userId,
+        trigger: {
+          type: "trigger",
+          connector: safe?.key,
+          operation: trigger?.key,
+          input: triggerInput,
+          authentication: safeCredentials.token,
+          authenticationKey: safeCredentials.key,
+        },
+        actions: [
+          {
+            type: "action",
+            connector: slack.key,
+            operation: action.key,
+            input: actionInput,
+            authentication: slackCredentials.token,
+            authenticationKey: slackCredentials.key,
+          },
+        ],
+        source: "urn:grindery:embed",
+      };
+      const newWorkflow = {
+        ...workflow,
+        signature: JSON.stringify(workflow),
+      };
+      const client = new NexusClient(accessToken);
+      try {
+        await client.workflow.create({ workflow: newWorkflow });
+      } catch (error: any) {
+        console.error("Workflow saving error: ", error);
+        setError("Workflow saving error. Please try again.");
+      }
+      setSaving(false);
+    } else {
+      setError("Workflow saving error. Please try again.");
+    }
+  };
+
   const handleCancelButtonClick = () => {
     setStep(0);
     sendPostMessage("gr_complete");
@@ -171,6 +230,7 @@ export const SafeSlackIntegrationContextProvider = ({
 
   const handleSaveButtonClick = () => {
     setStep(3);
+    saveWorkflow();
   };
 
   const updateAction = useCallback(async () => {
@@ -200,7 +260,6 @@ export const SafeSlackIntegrationContextProvider = ({
     } catch (error: any) {
       setError("Connector error. Please reload the page, any try again.");
     }
-
     setConnectorLoading(false);
   }, [accessToken, slackCredentials, actionInput]);
 
@@ -235,6 +294,7 @@ export const SafeSlackIntegrationContextProvider = ({
         safeCredentials,
         slackCredentials,
         chains,
+        saving,
         handleTriggerInputChange,
         handleActionInputChange,
         handleCredentialsChange,
@@ -242,6 +302,7 @@ export const SafeSlackIntegrationContextProvider = ({
         handleNextButtonClick,
         handleSaveButtonClick,
         handleBackButtonClick,
+        saveWorkflow,
       }}
     >
       {children}
