@@ -1,6 +1,10 @@
-# Grindery Embed App
+# Grindery Embed App: Your Ultimate Integration Tool
 
-Grindery Embed App is designed to be seamlessly integrated into your existing webpages via an iframe. The app employs a system of sending and receiving postMessages to interact with the parent window, ensuring smooth and dynamic interaction between the host webpage and the app. All messages are crafted in the JSON-RPC 2.0 format for consistency and easy parsing.
+The Grindery Embed App enables swift and effortless construction of an integrations directory for your web application.
+
+Boost your website's capabilities with Grindery Embed App. This powerful tool effortlessly embeds into your existing webpages through an iframe, providing your users with a platform to link and customize interactions between a variety of web2 and web3 applications, services, dApps, and blockchain smart-contracts.
+
+Grindery Embed App operates as a simplified workflow builder, meticulously designed to facilitate the creation and configuration of workflows. With a focus on usability, the app provides predefined parameters, including a diverse set of connectors and operations to streamline the integration process.
 
 ## Table of Contents
 
