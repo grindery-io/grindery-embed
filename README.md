@@ -1,16 +1,13 @@
 # Grindery Embed App
 
-The app is designed to be embedded into an iframe.
+The Grindery Embed App is a web application designed to be embedded into an iframe. It facilitates communication between the embedded app and the parent window using postMessages in JSON-RPC 2.0 format.
 
-## Usage
+## Communication Messages
 
-The App can send and receive postMessages. All messages should be in JSON-RPC 2.0 format.
+The App sends the following messages to the parent window:
 
-### Messages the App will send to the parent window
-
-#### Resize
-
-This message will be send to the parent once the App has been loaded, and on every window.resize event.
+1. **Resize**: This message is sent to the parent once the App has been loaded and whenever there is a window.resize event. It informs the parent window about the desired height of the iframe.  
+   Example:
 
 ```json
 {
@@ -22,9 +19,8 @@ This message will be send to the parent once the App has been loaded, and on eve
 }
 ```
 
-#### Complete
-
-This message will be send when App process is done. Parent page can close the iframe after that.
+2. **Complete**: This message is sent when the App's processing is complete. Upon receiving this message, the parent page can close the iframe.  
+   Example:
 
 ```json
 {
@@ -33,11 +29,10 @@ This message will be send when App process is done. Parent page can close the if
 }
 ```
 
-### Messages the App expects from the parent window
+The App expects the following message from the parent window:
 
-#### Initialization
-
-This message can be send to the App to provide initial configuration parameters. This should be sent after the first `gr_resize` notification to ensure the embedded page is ready to receive messages.
+1. **Initialization**: This message can be sent to the App to provide initial configuration parameters. It should be sent after the first "gr_resize" notification to ensure the embedded page is ready to receive messages.  
+   Example:
 
 ```json
 {
@@ -50,49 +45,43 @@ This message can be send to the App to provide initial configuration parameters.
 }
 ```
 
+## Configuration
+
+The embed app URL parameters and query strings can be used to configure the app. The app URL is `embed.grindery.io`.
+
+To specify trigger and action Connectors, add params to the URL. More information about Connectors can be found in the [Grindery Nexus Schema V2](https://github.com/grindery-io/grindery-nexus-schema-v2/tree/master/connectors) repository.
+
+List of available connectors: [Grindery Nexus Schema V2 Connectors](https://github.com/grindery-io/grindery-nexus-schema-v2/tree/master/cds)
+
+For example, to set up Slack notifications when a new record is added to Airtable, use the following URL: `embed.grindery.io/airtable/slack`
+
+Additionally, it is possible to specify the exact trigger and/or action operation and prefill input fields with values using GET parameters.
+
+The available configuration options are as follows:
+
+| Configuration Option          | Required | Description                                             |
+| ----------------------------- | -------- | ------------------------------------------------------- |
+| {trigger connector key}       | yes      | First segment of the URL                                |
+| {action connector key}        | yes      | Second segment of the URL                               |
+| trigger                       | no       | GET parameter: key of the trigger operation             |
+| action                        | no       | GET parameter: key of the action operation              |
+| trigger.input.{inputFieldKey} | no       | GET parameter: value for the input field of the trigger |
+| action.input.{inputFieldKey}  | no       | GET parameter: value for the input field of the action  |
+
 ## Development
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was bootstrapped with [Create React App](https://create-react-app.dev/).
 
 ### Available Scripts
 
-In the project directory, you can run:
+In the project directory, you can run the following scripts:
 
-#### `yarn start`
+- yarn start: Runs the app in development mode. Open http://localhost:3000 to view it in the browser. The page will reload if you make edits, and lint errors will be displayed in the console.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- yarn test: Launches the test runner in interactive watch mode. Refer to the documentation for more information on running tests.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- yarn build: Builds the app for production to the build folder. It correctly bundles React in production mode and optimizes the build for the best performance. The build is minified, and the filenames include hashes. Your app is ready to be deployed!
 
-#### `yarn test`
+## License
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-#### `yarn build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-#### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-### Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+This project is licensed under the MIT License.
