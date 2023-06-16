@@ -14,6 +14,8 @@ Grindery Embed App operates as a simplified workflow builder, meticulously desig
 
 ## Communication
 
+The app employs a system of sending and receiving postMessages to interact with the parent window, ensuring smooth and dynamic interaction between the host webpage and the app. All messages are crafted in the JSON-RPC 2.0 format for consistency and easy parsing.
+
 The App sends the following post messages to the parent window:
 
 1. **Resize**: This message is sent to the parent once the App has been loaded and whenever there is a window.resize event. It informs the parent window about the desired height of the iframe.  
