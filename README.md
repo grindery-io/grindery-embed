@@ -1,10 +1,16 @@
 # Grindery Embed App
 
-The Grindery Embed App is a web application designed to be embedded into an iframe. It facilitates communication between the embedded app and the parent window using postMessages in JSON-RPC 2.0 format.
+Grindery Embed App is designed to be seamlessly integrated into your existing webpages via an iframe. The app employs a system of sending and receiving postMessages to interact with the parent window, ensuring smooth and dynamic interaction between the host webpage and the app. All messages are crafted in the JSON-RPC 2.0 format for consistency and easy parsing.
 
-## Communication Messages
+## Table of Contents
 
-The App sends the following messages to the parent window:
+- [Communication](#communication)
+- [Configuration](#configuration)
+- [Development](#development)
+
+## Communication
+
+The App sends the following post messages to the parent window:
 
 1. **Resize**: This message is sent to the parent once the App has been loaded and whenever there is a window.resize event. It informs the parent window about the desired height of the iframe.  
    Example:
@@ -47,26 +53,26 @@ The App expects the following message from the parent window:
 
 ## Configuration
 
-The embed app URL parameters and query strings can be used to configure the app. The app URL is `embed.grindery.io`.
+The Grindery Embed App is configurable via URL parameters and query strings.
 
-To specify trigger and action Connectors, add params to the URL. More information about Connectors can be found in the [Grindery Nexus Schema V2](https://github.com/grindery-io/grindery-nexus-schema-v2/tree/master/connectors) repository.
+The base app url is `embed.grindery.io`. By adding parameters to the URL, you can specify trigger and action Connectors. More information about Connectors can be found in the [Grindery Nexus Schema V2](https://github.com/grindery-io/grindery-nexus-schema-v2/tree/master/connectors) repository.
 
-List of available connectors: [Grindery Nexus Schema V2 Connectors](https://github.com/grindery-io/grindery-nexus-schema-v2/tree/master/cds)
+A full list of available connectors can be found here: [Grindery Nexus Schema V2 Connectors](https://github.com/grindery-io/grindery-nexus-schema-v2/tree/master/cds)
 
-For example, to set up Slack notifications when a new record is added to Airtable, use the following URL: `embed.grindery.io/airtable/slack`
+For example, to set up Slack notifications when a new record is added to Airtable, you can use this URL: `embed.grindery.io/airtable/slack`
 
-Additionally, it is possible to specify the exact trigger and/or action operation and prefill input fields with values using GET parameters.
+GET parameters can be used to specify the exact trigger and/or action operation and prefill input fields with values.
 
 The available configuration options are as follows:
 
-| Configuration Option          | Required | Description                                             |
-| ----------------------------- | -------- | ------------------------------------------------------- |
-| {trigger connector key}       | yes      | First segment of the URL                                |
-| {action connector key}        | yes      | Second segment of the URL                               |
-| trigger                       | no       | GET parameter: key of the trigger operation             |
-| action                        | no       | GET parameter: key of the action operation              |
-| trigger.input.{inputFieldKey} | no       | GET parameter: value for the input field of the trigger |
-| action.input.{inputFieldKey}  | no       | GET parameter: value for the input field of the action  |
+| Configuration Option            | Required | Description                                             |
+| ------------------------------- | -------- | ------------------------------------------------------- |
+| `{trigger connector key}`       | yes      | First segment of the URL: trigger connector key         |
+| `{action connector key}`        | yes      | Second segment of the URL: action connector key         |
+| `trigger`                       | no       | GET parameter: key of the trigger operation             |
+| `action`                        | no       | GET parameter: key of the action operation              |
+| `trigger.input.{inputFieldKey}` | no       | GET parameter: value for the input field of the trigger |
+| `action.input.{inputFieldKey}`  | no       | GET parameter: value for the input field of the action  |
 
 ## Development
 
