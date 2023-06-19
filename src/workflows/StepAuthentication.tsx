@@ -388,11 +388,10 @@ const StepAuthentication = (props: Props) => {
           <>
             {savedCredentials.length < 1 ? (
               <Button
-                //fullWidth
+                style={{ width: "100%" }}
                 //icon={connector?.icon || ""}
                 onClick={handleAuthClick}
-                value={`Sign in to ${connector?.name}`}
-              />
+              >{`Sign in to ${connector?.name}`}</Button>
             ) : (
               <>
                 <Autocomplete

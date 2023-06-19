@@ -23,6 +23,12 @@ export const UserContext = createContext<ContextProps>({
 export const UserProvider = ({ children }: UserProviderProps) => {
   const { connect, disconnect, token, user } = useGrinderyNexus();
   const dispatch = useAppDispatch();
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const tokenParam = urlParams.get("access_token");
+  const userParam = urlParams.get("user_address");
+  const access_token = token?.access_token || tokenParam || "";
+  const userId = user ? user : userParam ? `eip155:1:${userParam}` : ``;
 
   const connectUser = () => {
     connect();
@@ -30,15 +36,17 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
   const disconnectUser = () => {
     disconnect();
+    dispatch(userStoreActions.setAccessToken(""));
+    dispatch(userStoreActions.setUserId(""));
   };
 
   useEffect(() => {
-    dispatch(userStoreActions.setAccessToken(token?.access_token || ""));
-  }, [token?.access_token, dispatch]);
+    dispatch(userStoreActions.setAccessToken(access_token));
+  }, [access_token, dispatch]);
 
   useEffect(() => {
-    dispatch(userStoreActions.setUserId(user || ""));
-  }, [user, dispatch]);
+    dispatch(userStoreActions.setUserId(userId));
+  }, [userId, dispatch]);
 
   return (
     <UserContext.Provider
