@@ -9,7 +9,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 const Wrapper = styled.div`
   max-width: 816px;
-  padding: 32px 20px 42px;
+  padding: 40px 16px 40px;
   border: none;
   display: flex;
   flex-direction: column;
@@ -17,8 +17,6 @@ const Wrapper = styled.div`
   jsutify-content: flex-start;
   flex-wrap: nowrap;
   margin: 0 auto;
-  padding: 0 0 16px;
-  margin: 40px auto 0;
 `;
 
 type Props = {};
