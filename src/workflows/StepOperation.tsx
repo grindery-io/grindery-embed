@@ -123,12 +123,12 @@ const StepOperation = (props: Props) => {
     if (type === "trigger") {
       updateWorkflow({
         "trigger.operation": value || "",
-        "trigger.input": {},
+        //"trigger.input": {},
       });
     } else {
       updateWorkflow({
         ["actions[" + index + "].operation"]: value || "",
-        ["actions[" + index + "].input"]: {},
+        //["actions[" + index + "].input"]: {},
       });
     }
   };

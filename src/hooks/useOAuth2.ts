@@ -31,7 +31,7 @@ const useOAuth2 = (props: UseOAuth2Props) => {
           setCredentials(res.data || null);
         }
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
     }
   }, [accessToken, authCode]);

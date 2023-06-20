@@ -331,13 +331,13 @@ const StepAuthentication = (props: Props) => {
       updateWorkflow({
         "trigger.authentication": newToken,
         "trigger.authenticationKey": value,
-        "trigger.input": {},
+        //"trigger.input": {},
       });
     } else {
       updateWorkflow({
         ["actions[" + index + "].authentication"]: newToken,
         ["actions[" + index + "].authenticationKey"]: value,
-        ["actions[" + index + "].input"]: {},
+        //["actions[" + index + "].input"]: {},
       });
     }
     setOperationIsTested(false);
@@ -362,6 +362,23 @@ const StepAuthentication = (props: Props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!token && credentialsKey) {
+      if (type === "trigger") {
+        updateWorkflow({
+          "trigger.authentication":
+            savedCredentials.find((c) => c.key === credentialsKey)?.token || "",
+        });
+      } else {
+        updateWorkflow({
+          ["actions[" + index + "].authentication"]:
+            savedCredentials.find((c) => c.key === credentialsKey)?.token || "",
+        });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [credentialsKey, token, savedCredentials, index, type]);
 
   return operation && operationAuthenticationIsRequired ? (
     <Container>

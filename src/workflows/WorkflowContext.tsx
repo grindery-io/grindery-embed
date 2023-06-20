@@ -154,23 +154,43 @@ export const WorkflowContextProvider = ({
   const actionOperation =
     actionConnectorProp.actions?.find((a: Action) => a.key === actionParam)
       ?.key || "";
-  const triggerInputKeys =
+  /*const triggerInputKeys =
     triggerConnectorProp.triggers
       ?.find((t: Trigger) => t.key === triggerParam)
-      ?.operation?.inputFields?.map((f: Field) => f.key) || [];
+      ?.operation?.inputFields?.map((f: Field) => f.key) || [];*/
   const triggerDefaultInput: any = {};
-  for (const key of triggerInputKeys) {
+  /*for (const key of triggerInputKeys) {
     triggerDefaultInput[key] = urlParams.get("trigger.input." + key) || "";
-  }
+  }*/
 
-  const actionInputKeys =
+  /*const actionInputKeys =
     actionConnectorProp.actions
       ?.find((a: Action) => a.key === actionParam)
-      ?.operation?.inputFields?.map((f: Field) => f.key) || [];
+      ?.operation?.inputFields?.map((f: Field) => f.key) || [];*/
   const actionDefaultInput: any = {};
-  for (const key of actionInputKeys) {
+  /*for (const key of actionInputKeys) {
     actionDefaultInput[key] = urlParams.get("action.input." + key) || "";
+  }*/
+
+  for (var value of Array.from(urlParams.keys())) {
+    if (value.includes("trigger.input.")) {
+      const key = value.replace("trigger.input.", "");
+      triggerDefaultInput[key] = urlParams.get(value) || "";
+    }
+    if (value.includes("action.input.")) {
+      const key = value.replace("action.input.", "");
+      actionDefaultInput[key] = urlParams.get(value) || "";
+    }
   }
+
+  const triggerAuthenticationParam = urlParams.get("trigger.authentication");
+  const triggerAuthenticationKeyParam = urlParams.get(
+    "trigger.authenticationKey"
+  );
+  const actionAuthenticationParam = urlParams.get("action.authentication");
+  const actionAuthenticationKeyParam = urlParams.get(
+    "action.authenticationKey"
+  );
 
   // loaded nexus connectors CDS
   const connectors: Connector[] = [triggerConnectorProp, actionConnectorProp];
@@ -183,6 +203,8 @@ export const WorkflowContextProvider = ({
       connector: triggerConnectorProp.key || "",
       operation: triggerOperation,
       input: triggerDefaultInput,
+      authentication: triggerAuthenticationParam || undefined,
+      authenticationKey: triggerAuthenticationKeyParam || undefined,
     },
     actions: [
       {
@@ -190,6 +212,8 @@ export const WorkflowContextProvider = ({
         connector: actionConnectorProp.key || "",
         operation: actionOperation,
         input: actionDefaultInput,
+        authentication: actionAuthenticationParam || undefined,
+        authenticationKey: actionAuthenticationKeyParam || undefined,
       },
     ],
     creator: user || "",
