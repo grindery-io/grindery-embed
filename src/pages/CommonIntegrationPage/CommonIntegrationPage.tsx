@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import GrinderyClient from "grindery-nexus-client";
 import { useParams } from "react-router";
-import { ThemeProvider } from "grindery-ui";
+import { ThemeProvider, Button } from "grindery-ui";
 import WorkflowContextProvider from "../../workflows/WorkflowContext";
 import WorkflowBuilder from "../../workflows/WorkflowBuilder";
 import { Connector } from "../../types/Connector";
@@ -13,13 +13,15 @@ import {
 import WorkflowsList from "../../workflows/WorkflowsList";
 import { Workflow } from "../../types/Workflow";
 import { Loading } from "../../components";
+import { Box } from "@mui/material";
 
 const CommonIntegrationPage = () => {
   const dispatch = useAppDispatch();
 
   const [loading, setLoading] = useState(true);
   let { triggerConnectorKey, actionConnectorKey } = useParams();
-  const { accessToken, create, workflows } = useAppSelector(selectUserStore);
+  const { accessToken, create, workflows, workflowKey } =
+    useAppSelector(selectUserStore);
 
   const [triggerConnector, setTriggerConnector] = useState<Connector | null>(
     null
@@ -53,9 +55,7 @@ const CommonIntegrationPage = () => {
 
   const getWorkflows = useCallback(async () => {
     const client = new GrinderyClient(accessToken);
-    dispatch(userStoreActions.setCreate(false));
     if (accessToken) {
-      setLoading(true);
       try {
         const workflowsResponse = await client.workflow.list({});
         const workflows = workflowsResponse
@@ -81,15 +81,35 @@ const CommonIntegrationPage = () => {
 
   useEffect(() => {
     getWorkflows();
-  }, [getWorkflows]);
+  }, [create, workflowKey, getWorkflows]);
 
   return triggerConnector && actionConnector && !loading ? (
     <ThemeProvider>
-      {filteredWorkflows && filteredWorkflows.length > 0 && !create ? (
-        <WorkflowsList
-          connectors={[triggerConnector, actionConnector]}
-          workflows={filteredWorkflows}
-        />
+      {!create && !workflowKey ? (
+        <Box
+          sx={{
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "stretch",
+            justifyContent: "center",
+            padding: "40px",
+          }}
+        >
+          {filteredWorkflows && filteredWorkflows.length > 0 && (
+            <WorkflowsList
+              connectors={[triggerConnector, actionConnector]}
+              workflows={filteredWorkflows}
+            />
+          )}
+
+          <Button
+            value="Create New Integration"
+            onClick={() => {
+              dispatch(userStoreActions.setCreate(true));
+            }}
+          />
+        </Box>
       ) : (
         <WorkflowContextProvider
           triggerConnector={triggerConnector}

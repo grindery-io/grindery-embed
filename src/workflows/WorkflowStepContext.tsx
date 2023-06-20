@@ -5,7 +5,6 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { useParams } from "react-router";
 import NexusClient from "grindery-nexus-client";
 import { Action, Connector, Field, Trigger } from "../types/Connector";
 import { useWorkflowContext } from "./WorkflowContext";
@@ -81,8 +80,8 @@ export const WorkflowStepContextProvider = ({
   const urlParams = new URLSearchParams(queryString);
   const actionParam = urlParams.get("action");
   const triggerParam = urlParams.get("trigger");
-  let { key } = useParams();
-  const { accessToken: access_token } = useAppSelector(selectUserStore);
+  const { accessToken: access_token, workflowKey: key } =
+    useAppSelector(selectUserStore);
   const client = new NexusClient(access_token);
   const { workflow, updateWorkflow } = useWorkflowContext();
   const [activeRow, setActiveRow] = useState(

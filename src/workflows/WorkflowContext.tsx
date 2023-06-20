@@ -1,7 +1,6 @@
 import React, { useState, createContext, useEffect, useContext } from "react";
 import _ from "lodash";
 import NexusClient from "grindery-nexus-client";
-import { useParams } from "react-router-dom";
 import { Workflow } from "../types/Workflow";
 import {
   Action,
@@ -11,9 +10,8 @@ import {
   SelectedTrigger,
   Trigger,
 } from "../types/Connector";
-import { useAppSelector } from "../store";
-import { selectUserStore } from "../store/slices/userSlice";
-import { sendPostMessage } from "../utils/postMessages";
+import { useAppDispatch, useAppSelector } from "../store";
+import { selectUserStore, userStoreActions } from "../store/slices/userSlice";
 
 // empty workflow declaration
 const blankWorkflow: Workflow = {
@@ -129,18 +127,13 @@ export const WorkflowContextProvider = ({
   actionConnector: actionConnectorProp,
   onSaved,
 }: WorkflowContextProviderProps) => {
-  let { key } = useParams();
-
-  /*const {
-    getWorkflowsList,
-    connectors: availableConnectors,
-    client,
+  const dispatch = useAppDispatch();
+  const {
+    userId: user,
+    accessToken,
+    workflowKey: key,
     workflows,
-    user,
-  } = useAppContext();*/
-
-  const { userId: user, accessToken } = useAppSelector(selectUserStore);
-  const workflows: Workflow[] = [];
+  } = useAppSelector(selectUserStore);
   const client = new NexusClient(accessToken);
   const [chains, setChains] = useState<any[]>([]);
 
@@ -546,11 +539,10 @@ export const WorkflowContextProvider = ({
       setLoading(true);
       try {
         await client?.workflow.create({ workflow: readyWorkflow });
-        setSaved(true);
         if (onSaved) {
           onSaved();
         }
-        sendPostMessage("gr_complete");
+        dispatch(userStoreActions.setCreate(false));
       } catch (error: any) {
         setSaved(false);
         setError("Workflow saving error. Please try again.");

@@ -1,18 +1,16 @@
 import React, { useState } from "react";
-import { useParams } from "react-router";
+import GrinderyClient from "grindery-nexus-client";
 import { useWorkflowContext } from "./WorkflowContext";
 import { Box, Button, Snackbar, Stack } from "@mui/material";
-import { useAppDispatch } from "../store";
-import { userStoreActions } from "../store/slices/userSlice";
+import { useAppDispatch, useAppSelector } from "../store";
+import { selectUserStore, userStoreActions } from "../store/slices/userSlice";
 
 type Props = {};
 
 const WorkflowSave = (props: Props) => {
   const dispatch = useAppDispatch();
-  const { workflow, saveWorkflow, workflowReadyToSave, updateWorkflow } =
-    useWorkflowContext();
-  const editWorkflow = (a: any, b: any, c: any) => {};
-  const { key } = useParams();
+  const { workflow, saveWorkflow, workflowReadyToSave } = useWorkflowContext();
+  const { accessToken, workflowKey: key } = useAppSelector(selectUserStore);
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({
     opened: false,
@@ -26,26 +24,20 @@ const WorkflowSave = (props: Props) => {
       const wf = { ...workflow };
       delete wf.signature;
       delete wf.system;
-
-      editWorkflow(
-        {
-          ...wf,
-          state: wf.state === "on" && workflowReadyToSave ? "on" : "off",
-          signature: JSON.stringify(wf),
-        },
-        false,
-        () => {
-          setSnackbar({
-            opened: true,
-            message: "Workflow updated",
-            severity: "success",
-          });
-          setLoading(false);
-        }
-      );
-      updateWorkflow({
-        state: wf.state === "on" && workflowReadyToSave ? "on" : "off",
-      });
+      wf.signature = JSON.stringify(wf);
+      if (wf.state === "on" && workflowReadyToSave) {
+        wf.state = "on";
+      } else {
+        wf.state = "off";
+      }
+      const client = new GrinderyClient(accessToken);
+      try {
+        await client.workflow.update({ key: wf.key, workflow: wf });
+        dispatch(userStoreActions.setWorkflowKey(""));
+        dispatch(userStoreActions.setCreate(false));
+      } catch (error) {
+        console.error("workflow update error", error);
+      }
     } else {
       saveWorkflow();
     }
@@ -70,6 +62,7 @@ const WorkflowSave = (props: Props) => {
           color="secondary"
           onClick={() => {
             dispatch(userStoreActions.setCreate(false));
+            dispatch(userStoreActions.setWorkflowKey(""));
           }}
         >
           Cancel
@@ -95,7 +88,7 @@ const WorkflowSave = (props: Props) => {
           disabled={!workflowReadyToSave || loading}
           onClick={handleClick}
         >
-          Save workflow
+          Save Integration
         </Button>
       </Stack>
 

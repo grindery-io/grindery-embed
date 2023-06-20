@@ -4,8 +4,6 @@ import { useWorkflowContext } from "./WorkflowContext";
 import WorkflowStepContextProvider from "./WorkflowStepContext";
 import WorkflowSave from "./WorkflowSave";
 import { styled } from "styled-components";
-import { Box, Typography } from "@mui/material";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 const Wrapper = styled.div`
   max-width: 816px;
@@ -22,58 +20,35 @@ const Wrapper = styled.div`
 type Props = {};
 
 const WorkflowBuilder = (props: Props) => {
-  const { workflow, saved } = useWorkflowContext();
+  const { workflow } = useWorkflowContext();
 
   // workflow steps output
   const [outputFields, setOutputFields] = useState<any[]>([]);
 
-  //const queryString = window.location.search;
-  //const urlParams = new URLSearchParams(queryString);
-  //  const triggerHidden = urlParams.get("trigger.hidden");
-
   return (
     <Wrapper>
-      {!saved ? (
-        <>
+      <>
+        <WorkflowStepContextProvider
+          type="trigger"
+          index={0}
+          step={1}
+          setOutputFields={setOutputFields}
+        >
+          <WorkflowStep outputFields={outputFields} />
+        </WorkflowStepContextProvider>
+        {workflow.actions.map((action, index) => (
           <WorkflowStepContextProvider
-            type="trigger"
-            index={0}
-            step={1}
+            key={`${action.connector}_${index}`}
+            type="action"
+            index={index}
+            step={index + 2}
             setOutputFields={setOutputFields}
           >
             <WorkflowStep outputFields={outputFields} />
           </WorkflowStepContextProvider>
-          {workflow.actions.map((action, index) => (
-            <WorkflowStepContextProvider
-              key={`${action.connector}_${index}`}
-              type="action"
-              index={index}
-              step={index + 2}
-              setOutputFields={setOutputFields}
-            >
-              <WorkflowStep outputFields={outputFields} />
-            </WorkflowStepContextProvider>
-          ))}
-          <WorkflowSave />
-        </>
-      ) : (
-        <Box textAlign="center">
-          <CheckCircleIcon
-            color="success"
-            sx={{ fontSize: "42px", margin: "0 0 20px" }}
-          />
-          <Typography
-            sx={{
-              fontWeight: "700",
-              fontSize: "18px",
-              lineHeight: "120%",
-              fontStyle: "normal",
-            }}
-          >
-            Workflow saved
-          </Typography>
-        </Box>
-      )}
+        ))}
+        <WorkflowSave />
+      </>
     </Wrapper>
   );
 };

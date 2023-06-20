@@ -7,6 +7,7 @@ interface UserState {
   create: boolean;
   userId: string;
   workflows: Workflow[];
+  workflowKey: string;
 }
 
 const initialState: UserState = {
@@ -14,6 +15,7 @@ const initialState: UserState = {
   create: false,
   userId: "",
   workflows: [],
+  workflowKey: "",
 };
 
 const userSlice = createSlice({
@@ -31,6 +33,9 @@ const userSlice = createSlice({
     },
     setCreate(state, action: PayloadAction<boolean>) {
       state.create = action.payload;
+    },
+    setWorkflowKey(state, action: PayloadAction<string>) {
+      state.workflowKey = action.payload;
     },
   },
 });
