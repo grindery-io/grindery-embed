@@ -1,6 +1,6 @@
 import React from "react";
 //import styled from "styled-components";
-import StepsDivider from "./StepsDivider";
+import { Box } from "@mui/material";
 //import { useWorkflowContext } from "./WorkflowContext";
 //import AddStep from "../components/icons/AddStep";
 
@@ -61,7 +61,7 @@ const AddActionButton = (props: Props) => {
 
   return (
     <>
-      <StepsDivider height={16} />
+      <Box height="16px" />
       {/*<Button onClick={handleClick}>
         <AddStep />
   </Button>*/}

@@ -1,3 +1,15 @@
+:root {
+  --text-size-dashboard-label: 16px;
+  --text-size-horizontal-tab-label: 14px;
+  --text-size-list-item-label: 16px;
+  --text-size-history-item-label: 16px;
+  --text-size-history-date: 16px;
+  --text-size-transactions-label: 16px;
+  --text-size-transactions-subtitle: 14px;
+
+  --data-box-spacing: 20px;
+}
+
 body {
   margin: 0;
   font-family: Inter;

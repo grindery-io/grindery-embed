@@ -82,6 +82,7 @@ type WorkflowContextProviderProps = {
   children: React.ReactNode;
   triggerConnector: Connector;
   actionConnector: Connector;
+  onSaved?: () => void;
 };
 
 export const WorkflowContext = createContext<WorkflowContextProps>({
@@ -126,6 +127,7 @@ export const WorkflowContextProvider = ({
   children,
   triggerConnector: triggerConnectorProp,
   actionConnector: actionConnectorProp,
+  onSaved,
 }: WorkflowContextProviderProps) => {
   let { key } = useParams();
 
@@ -521,6 +523,9 @@ export const WorkflowContextProvider = ({
       try {
         await client?.workflow.create({ workflow: readyWorkflow });
         setSaved(true);
+        if (onSaved) {
+          onSaved();
+        }
         sendPostMessage("gr_complete");
       } catch (error: any) {
         setSaved(false);

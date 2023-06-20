@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { useParams } from "react-router";
 import { useWorkflowContext } from "./WorkflowContext";
-import { Button, Snackbar } from "@mui/material";
-import StepsDivider from "./StepsDivider";
+import { Box, Button, Snackbar, Stack } from "@mui/material";
+import { useAppDispatch } from "../store";
+import { userStoreActions } from "../store/slices/userSlice";
 
 type Props = {};
 
 const WorkflowSave = (props: Props) => {
+  const dispatch = useAppDispatch();
   const { workflow, saveWorkflow, workflowReadyToSave, updateWorkflow } =
     useWorkflowContext();
   const editWorkflow = (a: any, b: any, c: any) => {};
@@ -51,29 +53,52 @@ const WorkflowSave = (props: Props) => {
 
   return (
     <>
-      <StepsDivider height={16} />
-      <Button
-        sx={{
-          margin: 0,
-          background: "black",
-          color: "white",
-          cursor: "pointer",
-          "&:hover": {
+      <Box height={16} />
+      <Stack direction="row" alignItems="center" gap="16px">
+        <Button
+          sx={{
+            margin: 0,
+            background: "white",
+            color: "black",
+            cursor: "pointer",
+            border: "1px solid black",
+            "&:hover": {
+              background: "white",
+              color: "black",
+            },
+          }}
+          color="secondary"
+          onClick={() => {
+            dispatch(userStoreActions.setCreate(false));
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
+          sx={{
+            margin: 0,
             background: "black",
             color: "white",
-          },
-          "&.Mui-disabled": {
-            color: "white",
-            opacity: "0.5",
-            cursor: "not-allowed",
-          },
-        }}
-        color="primary"
-        disabled={!workflowReadyToSave || loading}
-        onClick={handleClick}
-      >
-        Save workflow
-      </Button>
+            cursor: "pointer",
+            border: "1px solid black",
+            "&:hover": {
+              background: "black",
+              color: "white",
+            },
+            "&.Mui-disabled": {
+              color: "white",
+              opacity: "0.5",
+              cursor: "not-allowed",
+            },
+          }}
+          color="primary"
+          disabled={!workflowReadyToSave || loading}
+          onClick={handleClick}
+        >
+          Save workflow
+        </Button>
+      </Stack>
+
       <Snackbar
         open={snackbar.opened}
         onClose={() => {

@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import StepHeader from "./StepHeader";
 import StepsDivider from "./StepsDivider";
-import AddActionButton from "./AddActionButton";
 import StepApp from "./StepApp";
 import StepOperation from "./StepOperation";
 import StepAuthentication from "./StepAuthentication";
@@ -10,6 +9,7 @@ import StepInput from "./StepInput";
 //import StepTest from "./StepTest";
 import { useWorkflowStepContext } from "./WorkflowStepContext";
 import { useWorkflowContext } from "./WorkflowContext";
+import { Box } from "@mui/material";
 
 const Container = styled.div`
   border: 1px solid #dcdcdc;
@@ -42,7 +42,6 @@ const WorkflowStep = ({ outputFields }: Props) => {
   const actionHidden = urlParams.get("action.hidden");
   return (
     <>
-      {type === "action" ? <StepsDivider height={16} /> : null}
       <Container
         style={{
           boxShadow:
@@ -73,7 +72,7 @@ const WorkflowStep = ({ outputFields }: Props) => {
           )}
         </Containerinner>
       </Container>
-      <AddActionButton prevStep={step} />
+      {type === "action" ? <Box height={16} /> : <StepsDivider height={32} />}
     </>
   );
 };
