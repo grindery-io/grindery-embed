@@ -106,7 +106,6 @@ const StepAuthentication = (props: Props) => {
 
   const workspaceToken = "";
   const { accessToken: access_token } = useAppSelector(selectUserStore);
-  const client = new NexusClient(access_token);
 
   const index = step - 2;
 
@@ -198,6 +197,7 @@ const StepAuthentication = (props: Props) => {
   };
 
   const updateFieldsDefinition = (newToken?: string) => {
+    const client = new NexusClient(access_token);
     if (operation?.operation?.inputFieldProviderUrl) {
       if (workflow) {
         setLoading(true);

@@ -11,7 +11,11 @@ import {
   Trigger,
 } from "../types/Connector";
 import { useAppDispatch, useAppSelector } from "../store";
-import { selectUserStore, userStoreActions } from "../store/slices/userSlice";
+import { selectUserStore } from "../store/slices/userSlice";
+import {
+  configStoreActions,
+  selecConfigStore,
+} from "../store/slices/configSlice";
 
 // empty workflow declaration
 const blankWorkflow: Workflow = {
@@ -128,62 +132,21 @@ export const WorkflowContextProvider = ({
   onSaved,
 }: WorkflowContextProviderProps) => {
   const dispatch = useAppDispatch();
+  const { userId: user, accessToken } = useAppSelector(selectUserStore);
   const {
-    userId: user,
-    accessToken,
     workflowKey: key,
     workflows,
-  } = useAppSelector(selectUserStore);
+    triggerOperation,
+    actionOperation,
+    triggerDefaultInput,
+    actionDefaultInput,
+    triggerAuthentication,
+    triggerAuthenticationKey,
+    actionAuthentication,
+    actionAuthenticationKey,
+  } = useAppSelector(selecConfigStore);
   const client = new NexusClient(accessToken);
   const [chains, setChains] = useState<any[]>([]);
-
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-  const actionParam = urlParams.get("action");
-  const triggerParam = urlParams.get("trigger");
-  const triggerOperation =
-    triggerConnectorProp.triggers?.find((t: Trigger) => t.key === triggerParam)
-      ?.key || "";
-  const actionOperation =
-    actionConnectorProp.actions?.find((a: Action) => a.key === actionParam)
-      ?.key || "";
-  /*const triggerInputKeys =
-    triggerConnectorProp.triggers
-      ?.find((t: Trigger) => t.key === triggerParam)
-      ?.operation?.inputFields?.map((f: Field) => f.key) || [];*/
-  const triggerDefaultInput: any = {};
-  /*for (const key of triggerInputKeys) {
-    triggerDefaultInput[key] = urlParams.get("trigger.input." + key) || "";
-  }*/
-
-  /*const actionInputKeys =
-    actionConnectorProp.actions
-      ?.find((a: Action) => a.key === actionParam)
-      ?.operation?.inputFields?.map((f: Field) => f.key) || [];*/
-  const actionDefaultInput: any = {};
-  /*for (const key of actionInputKeys) {
-    actionDefaultInput[key] = urlParams.get("action.input." + key) || "";
-  }*/
-
-  for (var value of Array.from(urlParams.keys())) {
-    if (value.includes("trigger.input.")) {
-      const key = value.replace("trigger.input.", "");
-      triggerDefaultInput[key] = urlParams.get(value) || "";
-    }
-    if (value.includes("action.input.")) {
-      const key = value.replace("action.input.", "");
-      actionDefaultInput[key] = urlParams.get(value) || "";
-    }
-  }
-
-  const triggerAuthenticationParam = urlParams.get("trigger.authentication");
-  const triggerAuthenticationKeyParam = urlParams.get(
-    "trigger.authenticationKey"
-  );
-  const actionAuthenticationParam = urlParams.get("action.authentication");
-  const actionAuthenticationKeyParam = urlParams.get(
-    "action.authenticationKey"
-  );
 
   // loaded nexus connectors CDS
   const connectors: Connector[] = [triggerConnectorProp, actionConnectorProp];
@@ -194,19 +157,19 @@ export const WorkflowContextProvider = ({
     trigger: {
       type: "trigger",
       connector: triggerConnectorProp.key || "",
-      operation: triggerOperation,
-      input: triggerDefaultInput,
-      authentication: triggerAuthenticationParam || undefined,
-      authenticationKey: triggerAuthenticationKeyParam || undefined,
+      operation: triggerOperation || "",
+      input: triggerDefaultInput || {},
+      authentication: triggerAuthentication || undefined,
+      authenticationKey: triggerAuthenticationKey || undefined,
     },
     actions: [
       {
         type: "action",
         connector: actionConnectorProp.key || "",
-        operation: actionOperation,
-        input: actionDefaultInput,
-        authentication: actionAuthenticationParam || undefined,
-        authenticationKey: actionAuthenticationKeyParam || undefined,
+        operation: actionOperation || "",
+        input: actionDefaultInput || {},
+        authentication: actionAuthentication || undefined,
+        authenticationKey: actionAuthenticationKey || undefined,
       },
     ],
     creator: user || "",
@@ -542,7 +505,7 @@ export const WorkflowContextProvider = ({
         if (onSaved) {
           onSaved();
         }
-        dispatch(userStoreActions.setCreate(false));
+        dispatch(configStoreActions.setCreate(false));
       } catch (error: any) {
         setSaved(false);
         setError("Workflow saving error. Please try again.");

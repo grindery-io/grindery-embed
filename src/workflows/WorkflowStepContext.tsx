@@ -10,6 +10,7 @@ import { Action, Connector, Field, Trigger } from "../types/Connector";
 import { useWorkflowContext } from "./WorkflowContext";
 import { useAppSelector } from "../store";
 import { selectUserStore } from "../store/slices/userSlice";
+import { selecConfigStore } from "../store/slices/configSlice";
 
 type WorkflowStepContextProps = {
   type: "trigger" | "action";
@@ -80,8 +81,8 @@ export const WorkflowStepContextProvider = ({
   const urlParams = new URLSearchParams(queryString);
   const actionParam = urlParams.get("action");
   const triggerParam = urlParams.get("trigger");
-  const { accessToken: access_token, workflowKey: key } =
-    useAppSelector(selectUserStore);
+  const { accessToken: access_token } = useAppSelector(selectUserStore);
+  const { workflowKey: key } = useAppSelector(selecConfigStore);
   const client = new NexusClient(access_token);
   const { workflow, updateWorkflow } = useWorkflowContext();
   const [activeRow, setActiveRow] = useState(

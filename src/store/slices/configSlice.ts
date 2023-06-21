@@ -1,23 +1,67 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
+import { Connector } from "../../types/Connector";
+import { Workflow } from "../../types/Workflow";
 
 interface ConfigState {
-  userAccessToken: string;
+  actionConnector: Connector | null;
+  create: boolean;
+  loading: boolean;
+  triggerConnector: Connector | null;
+  workflows: Workflow[];
+  workflowKey: string;
+  triggerOperation: string | undefined;
+  actionOperation: string | undefined;
+  triggerDefaultInput: any | undefined;
+  actionDefaultInput: any | undefined;
+  triggerAuthentication: string | null | undefined;
+  triggerAuthenticationKey: string | null | undefined;
+  actionAuthentication: string | null | undefined;
+  actionAuthenticationKey: string | null | undefined;
 }
 
 const initialState: ConfigState = {
-  userAccessToken: "",
+  actionConnector: null,
+  create: false,
+  loading: true,
+  triggerConnector: null,
+  workflows: [],
+  workflowKey: "",
+  triggerOperation: "",
+  actionOperation: "",
+  triggerDefaultInput: {},
+  actionDefaultInput: {},
+  triggerAuthentication: undefined,
+  triggerAuthenticationKey: undefined,
+  actionAuthentication: undefined,
+  actionAuthenticationKey: undefined,
 };
 
 const configSlice = createSlice({
   name: "config",
   initialState,
   reducers: {
-    setUserAccessToken(state, action: PayloadAction<string>) {
-      state.userAccessToken = action.payload || "";
+    setConfig(state, action: PayloadAction<Partial<ConfigState>>) {
+      const newState = { ...state, ...action.payload };
+      return newState;
     },
-    setConfig(state, action: PayloadAction<ConfigState>) {
-      state = { ...state, ...action.payload };
+    setWorkflows(state, action: PayloadAction<Workflow[]>) {
+      state.workflows = action.payload;
+    },
+    setCreate(state, action: PayloadAction<boolean>) {
+      state.create = action.payload;
+    },
+    setWorkflowKey(state, action: PayloadAction<string>) {
+      state.workflowKey = action.payload;
+    },
+    setLoading(state, action: PayloadAction<boolean>) {
+      state.loading = action.payload;
+    },
+    setTriggerConnector(state, action: PayloadAction<Connector>) {
+      state.triggerConnector = action.payload;
+    },
+    setActionConnector(state, action: PayloadAction<Connector>) {
+      state.actionConnector = action.payload;
     },
   },
 });

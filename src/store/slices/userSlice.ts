@@ -1,21 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
-import { Workflow } from "../../types/Workflow";
 
 interface UserState {
   accessToken: string;
-  create: boolean;
   userId: string;
-  workflows: Workflow[];
-  workflowKey: string;
 }
 
 const initialState: UserState = {
   accessToken: "",
-  create: false,
   userId: "",
-  workflows: [],
-  workflowKey: "",
 };
 
 const userSlice = createSlice({
@@ -27,15 +20,6 @@ const userSlice = createSlice({
     },
     setUserId(state, action: PayloadAction<string>) {
       state.userId = action.payload || "";
-    },
-    setWorkflows(state, action: PayloadAction<Workflow[]>) {
-      state.workflows = action.payload;
-    },
-    setCreate(state, action: PayloadAction<boolean>) {
-      state.create = action.payload;
-    },
-    setWorkflowKey(state, action: PayloadAction<string>) {
-      state.workflowKey = action.payload;
     },
   },
 });

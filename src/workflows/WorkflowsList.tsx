@@ -6,8 +6,9 @@ import { Connector } from "../types/Connector";
 import { CustomListItem } from "../components";
 import { Workflow } from "../types/Workflow";
 import { useAppDispatch, useAppSelector } from "../store";
-import { selectUserStore, userStoreActions } from "../store/slices/userSlice";
+import { selectUserStore } from "../store/slices/userSlice";
 import { ICONS } from "../config";
+import { configStoreActions } from "../store/slices/configSlice";
 
 const Wrapper = styled.div`
   display: flex;
@@ -128,6 +129,8 @@ type Props = {
 const WorkflowsList = (props: Props) => {
   const { connectors, workflows } = props;
 
+  console.log("workflows", workflows);
+
   return (
     <Wrapper>
       <ItemsWrapper>
@@ -221,13 +224,15 @@ const WorkflowRow = ({ item, connectors }: WorkflowRowProps) => {
       await client.workflow.delete({ key: item.key });
       const wfs = await client.workflow.list({});
       dispatch(
-        userStoreActions.setWorkflows(wfs?.map((wr: any) => wr.workflow) || [])
+        configStoreActions.setWorkflows(
+          wfs?.map((wr: any) => wr.workflow) || []
+        )
       );
     } catch (err) {}
   };
 
   const handleEditClick = () => {
-    dispatch(userStoreActions.setWorkflowKey(item.key));
+    dispatch(configStoreActions.setWorkflowKey(item.key));
   };
 
   useEffect(() => {

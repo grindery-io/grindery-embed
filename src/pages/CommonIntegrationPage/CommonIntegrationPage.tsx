@@ -1,34 +1,32 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import GrinderyClient from "grindery-nexus-client";
 import { useParams } from "react-router";
 import { ThemeProvider, Button } from "grindery-ui";
 import WorkflowContextProvider from "../../workflows/WorkflowContext";
 import WorkflowBuilder from "../../workflows/WorkflowBuilder";
-import { Connector } from "../../types/Connector";
 import { useAppDispatch, useAppSelector } from "../../store";
-import {
-  selectUserStore,
-  userStoreActions,
-} from "../../store/slices/userSlice";
+import { selectUserStore } from "../../store/slices/userSlice";
 import WorkflowsList from "../../workflows/WorkflowsList";
 import { Workflow } from "../../types/Workflow";
 import { Loading } from "../../components";
 import { Box } from "@mui/material";
+import {
+  configStoreActions,
+  selecConfigStore,
+} from "../../store/slices/configSlice";
 
 const CommonIntegrationPage = () => {
   const dispatch = useAppDispatch();
-
-  const [loading, setLoading] = useState(true);
+  const {
+    loading,
+    create,
+    workflows,
+    workflowKey,
+    triggerConnector,
+    actionConnector,
+  } = useAppSelector(selecConfigStore);
   let { triggerConnectorKey, actionConnectorKey } = useParams();
-  const { accessToken, create, workflows, workflowKey } =
-    useAppSelector(selectUserStore);
-
-  const [triggerConnector, setTriggerConnector] = useState<Connector | null>(
-    null
-  );
-  const [actionConnector, setActionConnector] = useState<Connector | null>(
-    null
-  );
+  const { accessToken } = useAppSelector(selectUserStore);
 
   const filteredWorkflows = workflows.filter(
     (item: Workflow) =>
@@ -36,22 +34,25 @@ const CommonIntegrationPage = () => {
       item.actions?.[0]?.connector === actionConnectorKey
   );
 
-  const getConnector = async (connectorKey: string, type: string) => {
-    const client = new GrinderyClient();
+  const getConnector = useCallback(
+    async (connectorKey: string, type: string) => {
+      const client = new GrinderyClient();
 
-    const connectorsRes = await client.connector.get({
-      driverKey: connectorKey,
-      enrich: true,
-    });
-    if (connectorsRes) {
-      if (type === "trigger") {
-        setTriggerConnector(connectorsRes);
+      const connectorsRes = await client.connector.get({
+        driverKey: connectorKey,
+        enrich: true,
+      });
+      if (connectorsRes) {
+        if (type === "trigger") {
+          dispatch(configStoreActions.setTriggerConnector(connectorsRes));
+        }
+        if (type === "action") {
+          dispatch(configStoreActions.setActionConnector(connectorsRes));
+        }
       }
-      if (type === "action") {
-        setActionConnector(connectorsRes);
-      }
-    }
-  };
+    },
+    [dispatch]
+  );
 
   const getWorkflows = useCallback(async () => {
     const client = new GrinderyClient(accessToken);
@@ -61,12 +62,12 @@ const CommonIntegrationPage = () => {
         const workflows = workflowsResponse
           ? workflowsResponse.map((wr: any) => wr.workflow)
           : [];
-        dispatch(userStoreActions.setWorkflows(workflows));
+        dispatch(configStoreActions.setWorkflows(workflows));
       } catch (error: any) {
         console.error("getWorkflows error: ", error.message);
-        dispatch(userStoreActions.setWorkflows([]));
+        dispatch(configStoreActions.setWorkflows([]));
       }
-      setLoading(false);
+      dispatch(configStoreActions.setLoading(false));
     }
   }, [accessToken, dispatch]);
 
@@ -77,7 +78,7 @@ const CommonIntegrationPage = () => {
     if (actionConnectorKey) {
       getConnector(actionConnectorKey, "action");
     }
-  }, [triggerConnectorKey, actionConnectorKey]);
+  }, [triggerConnectorKey, actionConnectorKey, getConnector]);
 
   useEffect(() => {
     getWorkflows();
@@ -106,7 +107,7 @@ const CommonIntegrationPage = () => {
           <Button
             value="Create New Integration"
             onClick={() => {
-              dispatch(userStoreActions.setCreate(true));
+              dispatch(configStoreActions.setCreate(true));
             }}
           />
         </Box>
