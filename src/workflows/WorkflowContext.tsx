@@ -158,7 +158,7 @@ export const WorkflowContextProvider = ({
       type: "trigger",
       connector: triggerConnectorProp.key || "",
       operation: triggerOperation || "",
-      input: triggerDefaultInput || {},
+      input: triggerDefaultInput ? { ...triggerDefaultInput } : {},
       authentication: triggerAuthentication || undefined,
       authenticationKey: triggerAuthenticationKey || undefined,
     },
@@ -167,7 +167,7 @@ export const WorkflowContextProvider = ({
         type: "action",
         connector: actionConnectorProp.key || "",
         operation: actionOperation || "",
-        input: actionDefaultInput || {},
+        input: actionDefaultInput ? { ...actionDefaultInput } : {},
         authentication: actionAuthentication || undefined,
         authenticationKey: actionAuthenticationKey || undefined,
       },
@@ -489,9 +489,12 @@ export const WorkflowContextProvider = ({
   const saveWorkflow = async (callback?: () => void) => {
     if (workflow) {
       const renamedWorkflow = { ...workflow };
-      renamedWorkflow.title = `${triggers.triggerConnector?.name} -> ${
+      /*renamedWorkflow.title = `${triggers.triggerConnector?.name} -> ${
         actions.actionConnector(0)?.name
-      } Embedded Integration`;
+      } Embedded Integration`;*/
+      renamedWorkflow.title = `${actions.current(0)?.name} when ${
+        triggers.current?.name
+      }`;
       const readyWorkflow = {
         ...renamedWorkflow,
         signature: JSON.stringify(renamedWorkflow),
