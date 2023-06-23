@@ -129,8 +129,6 @@ type Props = {
 const WorkflowsList = (props: Props) => {
   const { connectors, workflows } = props;
 
-  console.log("workflows", workflows);
-
   return (
     <Wrapper>
       <ItemsWrapper>

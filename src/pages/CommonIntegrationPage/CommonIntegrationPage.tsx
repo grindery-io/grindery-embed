@@ -24,6 +24,7 @@ const CommonIntegrationPage = () => {
     workflowKey,
     triggerConnector,
     actionConnector,
+    connectors,
   } = useAppSelector(selecConfigStore);
   let { triggerConnectorKey, actionConnectorKey } = useParams();
   const { accessToken } = useAppSelector(selectUserStore);
@@ -31,7 +32,9 @@ const CommonIntegrationPage = () => {
   const filteredWorkflows = workflows.filter(
     (item: Workflow) =>
       item.trigger?.connector === triggerConnectorKey &&
-      item.actions?.[0]?.connector === actionConnectorKey
+      (actionConnectorKey
+        ? item.actions?.[0]?.connector === actionConnectorKey
+        : true)
   );
 
   const getConnector = useCallback(
@@ -54,6 +57,14 @@ const CommonIntegrationPage = () => {
     [dispatch]
   );
 
+  const getConnectors = useCallback(async () => {
+    const client = new GrinderyClient(accessToken);
+
+    const connectorsRes = await client.connector.list({});
+
+    dispatch(configStoreActions.setConnectors(connectorsRes || []));
+  }, [accessToken, dispatch]);
+
   const getWorkflows = useCallback(async () => {
     const client = new GrinderyClient(accessToken);
     if (accessToken) {
@@ -72,6 +83,12 @@ const CommonIntegrationPage = () => {
   }, [accessToken, dispatch]);
 
   useEffect(() => {
+    if (accessToken) {
+      getConnectors();
+    }
+  }, [accessToken, getConnectors]);
+
+  useEffect(() => {
     if (triggerConnectorKey) {
       getConnector(triggerConnectorKey, "trigger");
     }
@@ -84,7 +101,7 @@ const CommonIntegrationPage = () => {
     getWorkflows();
   }, [create, workflowKey, getWorkflows]);
 
-  return triggerConnector && actionConnector && !loading ? (
+  return connectors && triggerConnector && !loading ? (
     <ThemeProvider>
       {!create && !workflowKey ? (
         <Box
@@ -99,7 +116,7 @@ const CommonIntegrationPage = () => {
         >
           {filteredWorkflows && filteredWorkflows.length > 0 && (
             <WorkflowsList
-              connectors={[triggerConnector, actionConnector]}
+              connectors={connectors}
               workflows={filteredWorkflows}
             />
           )}

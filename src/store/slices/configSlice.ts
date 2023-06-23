@@ -5,6 +5,7 @@ import { Workflow } from "../../types/Workflow";
 
 interface ConfigState {
   actionConnector: Connector | null;
+  connectors: Connector[];
   create: boolean;
   loading: boolean;
   triggerConnector: Connector | null;
@@ -18,10 +19,13 @@ interface ConfigState {
   triggerAuthenticationKey: string | null | undefined;
   actionAuthentication: string | null | undefined;
   actionAuthenticationKey: string | null | undefined;
+  actionsWhitelist: string[];
+  hideTrigger: boolean;
 }
 
 const initialState: ConfigState = {
   actionConnector: null,
+  connectors: [],
   create: false,
   loading: true,
   triggerConnector: null,
@@ -35,6 +39,8 @@ const initialState: ConfigState = {
   triggerAuthenticationKey: undefined,
   actionAuthentication: undefined,
   actionAuthenticationKey: undefined,
+  actionsWhitelist: [],
+  hideTrigger: false,
 };
 
 const configSlice = createSlice({
@@ -62,6 +68,9 @@ const configSlice = createSlice({
     },
     setActionConnector(state, action: PayloadAction<Connector>) {
       state.actionConnector = action.payload;
+    },
+    setConnectors(state, action: PayloadAction<Connector[]>) {
+      state.connectors = action.payload;
     },
   },
 });

@@ -4,6 +4,8 @@ import { useWorkflowContext } from "./WorkflowContext";
 import WorkflowStepContextProvider from "./WorkflowStepContext";
 import WorkflowSave from "./WorkflowSave";
 import { styled } from "styled-components";
+import { useAppSelector } from "../store";
+import { selecConfigStore } from "../store/slices/configSlice";
 
 const Wrapper = styled.div`
   max-width: 816px;
@@ -21,6 +23,7 @@ type Props = {};
 
 const WorkflowBuilder = (props: Props) => {
   const { workflow } = useWorkflowContext();
+  const { hideTrigger } = useAppSelector(selecConfigStore);
 
   // workflow steps output
   const [outputFields, setOutputFields] = useState<any[]>([]);
@@ -34,7 +37,7 @@ const WorkflowBuilder = (props: Props) => {
           step={1}
           setOutputFields={setOutputFields}
         >
-          <WorkflowStep outputFields={outputFields} />
+          {!hideTrigger && <WorkflowStep outputFields={outputFields} />}
         </WorkflowStepContextProvider>
         {workflow.actions.map((action, index) => (
           <WorkflowStepContextProvider

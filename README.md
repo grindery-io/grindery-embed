@@ -71,14 +71,20 @@ GET parameters can be used to specify the exact trigger and/or action operation 
 
 The available configuration options are as follows:
 
-| Configuration Option            | Required | Description                                             |
-| ------------------------------- | -------- | ------------------------------------------------------- |
-| `{trigger connector key}`       | yes      | First segment of the URL: trigger connector key         |
-| `{action connector key}`        | yes      | Second segment of the URL: action connector key         |
-| `trigger`                       | no       | GET parameter: key of the trigger operation             |
-| `action`                        | no       | GET parameter: key of the action operation              |
-| `trigger.input.{inputFieldKey}` | no       | GET parameter: value for the input field of the trigger |
-| `action.input.{inputFieldKey}`  | no       | GET parameter: value for the input field of the action  |
+| Configuration Option            | Required | Description                                                                                                        |
+| ------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------ |
+| `{trigger connector key}`       | yes      | First segment of the URL: trigger connector key                                                                    |
+| `{action connector key}`        | no       | Second segment of the URL: action connector key. If not provided user will be able to select any action            |
+| `trigger`                       | no       | GET parameter: key of the trigger operation                                                                        |
+| `action`                        | no       | GET parameter: key of the action operation                                                                         |
+| `trigger.input.{inputFieldKey}` | no       | GET parameter: value for the input field of the trigger                                                            |
+| `action.input.{inputFieldKey}`  | no       | GET parameter: value for the input field of the action                                                             |
+| `trigger.hide`                  | no       | GET parameter: set to `1` to hide trigger step. Define all required inputs for the trigger when using this option. |
+| `action.whitelist`              | no       | GET parameter: a comma-separated list of whitelisted connectors keys to be available in the action step.           |
+| `trigger.authentication`        | no       | GET parameter: Authentication token for the trigger connector                                                      |
+| `trigger.authenticationkey`     | no       | GET parameter: Trigger connector credentials key                                                                   |
+| `action.authentication`         | no       | GET parameter: Authentication token for the action connector                                                       |
+| `action.authenticationkey`      | no       | GET parameter: Action connector credentials key                                                                    |
 
 ## Development
 

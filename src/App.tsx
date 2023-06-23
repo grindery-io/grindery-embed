@@ -49,6 +49,10 @@ function App() {
                 element={<CommonIntegrationPage />}
               />
               <Route
+                path="/:triggerConnectorKey"
+                element={<CommonIntegrationPage />}
+              />
+              <Route
                 path="/"
                 element={
                   <Box>

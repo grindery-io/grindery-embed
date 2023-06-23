@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { TextInput } from "grindery-ui";
 import { useWorkflowStepContext } from "./WorkflowStepContext";
 import { useWorkflowContext } from "./WorkflowContext";
+import { useAppSelector } from "../store";
+import { selecConfigStore } from "../store/slices/configSlice";
 
 const Container = styled.div`
   border-top: 1px solid #dcdcdc;
@@ -133,6 +135,7 @@ const StepApp = (props: Props) => {
     useWorkflowStepContext();
   const { workflow, updateWorkflow, triggers, actions, activeStep } =
     useWorkflowContext();
+  const { actionsWhitelist } = useAppSelector(selecConfigStore);
   const [search, setSearch] = useState("");
   const index = step - 2;
   const opened =
@@ -149,36 +152,21 @@ const StepApp = (props: Props) => {
             paid: connector.pricing,
             group: undefined,
           })),
-
-          ...[
-            ...triggers.connectorsWithTriggers.map((connector) => ({
-              value: connector.key,
-              label: connector.name,
-              icon: connector.icon,
-              disabled: true,
-              group: "Coming soon",
-              paid: connector.pricing,
-            })),
-          ],
         ]
       : [
-          ...actions.connectorsWithActions.map((connector) => ({
-            value: connector.key,
-            label: connector.name,
-            icon: connector.icon,
-            paid: connector.pricing,
-            group: undefined,
-          })),
-          ...[
-            ...actions.connectorsWithActions.map((connector) => ({
+          ...actions.connectorsWithActions
+            .map((connector) => ({
               value: connector.key,
               label: connector.name,
               icon: connector.icon,
-              disabled: true,
-              group: "Coming soon",
               paid: connector.pricing,
-            })),
-          ],
+              group: undefined,
+            }))
+            .filter((c) =>
+              actionsWhitelist && actionsWhitelist.length > 0
+                ? actionsWhitelist.includes(c.value)
+                : true
+            ),
         ];
 
   const visibleOptions = options.filter((option) =>

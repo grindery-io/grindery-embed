@@ -9,6 +9,8 @@ import ArrowUp from "../components/icons/ArrowUp";
 import ArrowDown from "../components/icons/ArrowDown";
 import Trash from "../components/icons/Trash";
 import { ICONS } from "../config";
+import { useAppSelector } from "../store";
+import { selecConfigStore } from "../store/slices/configSlice";
 
 const Container = styled.div`
   padding: 20px 32px;
@@ -79,7 +81,7 @@ const Description = styled.p`
   padding: 0;
 `;
 
-/*const ChangeButton = styled.button`
+const ChangeButton = styled.button`
   background: #ffffff;
   border: 1px solid #0b0d17;
   border-radius: 5px;
@@ -99,7 +101,7 @@ const Description = styled.p`
   }
 `;
 
-const MenuButtonWrapper = styled.div`
+/*const MenuButtonWrapper = styled.div`
   & img {
     width: 20px;
     height: 20px;
@@ -122,16 +124,17 @@ const StepHeader = (props: Props) => {
   const {
     type,
     step,
-    //setActiveRow,
+    setActiveRow,
     connector,
     operation,
     operationIsConfigured,
     operationIsAuthenticated,
-    //setConnector,
-    //setOperationIsTested,
+    setConnector,
+    setOperationIsTested,
   } = useWorkflowStepContext();
-  const { activeStep, setActiveStep, workflow, setWorkflow } =
+  const { activeStep, setActiveStep, workflow, setWorkflow, updateWorkflow } =
     useWorkflowContext();
+  const { actionConnector } = useAppSelector(selecConfigStore);
   //const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const index = step - 2;
@@ -149,7 +152,7 @@ const StepHeader = (props: Props) => {
     }
   };
 
-  /*const handleChangeClick = () => {
+  const handleChangeClick = () => {
     if (type === "trigger") {
       updateWorkflow({
         "trigger.connector": "",
@@ -172,7 +175,7 @@ const StepHeader = (props: Props) => {
     setActiveRow(0);
     setConnector(null);
     setOperationIsTested(false);
-  };*/
+  };
 
   /*const handleMenuClose = () => {
     setAnchorEl(null);
@@ -301,9 +304,12 @@ const StepHeader = (props: Props) => {
           />
         </>
       )}
-      {/*connector && activeStep === step && (
-        <ChangeButton onClick={handleChangeClick}>Change</ChangeButton>
-      )*/}
+      {!actionConnector &&
+        connector &&
+        activeStep === step &&
+        type === "action" && (
+          <ChangeButton onClick={handleChangeClick}>Change</ChangeButton>
+        )}
       {/*type !== "trigger" && menuItems.length > 0 && (
         <div style={{ marginLeft: connector ? "0" : "auto" }}>
           <MenuButtonWrapper>

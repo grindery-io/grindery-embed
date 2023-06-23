@@ -82,8 +82,8 @@ type WorkflowContextProps = {
 
 type WorkflowContextProviderProps = {
   children: React.ReactNode;
-  triggerConnector: Connector;
-  actionConnector: Connector;
+  triggerConnector?: Connector;
+  actionConnector?: Connector | null;
   onSaved?: () => void;
 };
 
@@ -144,19 +144,17 @@ export const WorkflowContextProvider = ({
     triggerAuthenticationKey,
     actionAuthentication,
     actionAuthenticationKey,
+    connectors,
   } = useAppSelector(selecConfigStore);
   const client = new NexusClient(accessToken);
   const [chains, setChains] = useState<any[]>([]);
-
-  // loaded nexus connectors CDS
-  const connectors: Connector[] = [triggerConnectorProp, actionConnectorProp];
 
   // workflow state
   const [workflow, setWorkflow] = useState<Workflow>({
     title: "Name your workflow",
     trigger: {
       type: "trigger",
-      connector: triggerConnectorProp.key || "",
+      connector: triggerConnectorProp?.key || "",
       operation: triggerOperation || "",
       input: triggerDefaultInput ? { ...triggerDefaultInput } : {},
       authentication: triggerAuthentication || undefined,
@@ -165,7 +163,7 @@ export const WorkflowContextProvider = ({
     actions: [
       {
         type: "action",
-        connector: actionConnectorProp.key || "",
+        connector: actionConnectorProp?.key || "",
         operation: actionOperation || "",
         input: actionDefaultInput ? { ...actionDefaultInput } : {},
         authentication: actionAuthentication || undefined,
