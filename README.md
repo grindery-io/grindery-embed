@@ -65,7 +65,7 @@ The base app url is `embed.grindery.io`. By adding parameters to the URL, you ca
 
 A full list of available connectors can be found here: [Grindery Nexus Schema V2 Connectors](https://github.com/grindery-io/grindery-nexus-schema-v2/tree/master/cds)
 
-For example, to set up Slack notifications when a new record is added to Airtable, you can use this URL: `embed.grindery.io/airtable/slack`
+For example, to set up Slack notifications when a new record is added to Airtable, you can use this URL: `embed.grindery.io/airtable/slack`. See more examples below.
 
 GET parameters can be used to specify the exact trigger and/or action operation and prefill input fields with values.
 
@@ -85,6 +85,17 @@ The available configuration options are as follows:
 | `trigger.authenticationkey`     | no       | GET parameter: Trigger connector credentials key                                                                   |
 | `action.authentication`         | no       | GET parameter: Authentication token for the action connector                                                       |
 | `action.authenticationkey`      | no       | GET parameter: Action connector credentials key                                                                    |
+
+### Examples
+
+Example URLs demonstrating the usage of optional parameters:
+
+- Safe trigger, Slack action: https://embed.grindery.io/safe/slack
+- Safe trigger, any action: https://embed.grindery.io/safe
+- Safe trigger, whitelisted actions: https://embed.grindery.io/safe?action.whitelist=slack,airtable
+- Safe trigger with crednetials, any action: https://embed.grindery.io/safe?trigger.authenticationKey=123456
+- Safe trigger, Slack action with authentication token: https://embed.grindery.io/safe/slack?action.authentication=123456
+- Safe trigger with predefined operation and input fields, Slack action with predefined operation: https://embed.grindery.io/safe/slack?trigger=safeTransactionExecutedTransferNative&trigger.input._grinderyChain=eip155:1&trigger.input._grinderyContract=0x123456&action=sendChannelMessage
 
 ## Development
 
