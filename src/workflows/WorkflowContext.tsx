@@ -144,10 +144,17 @@ export const WorkflowContextProvider = ({
     triggerAuthenticationKey,
     actionAuthentication,
     actionAuthenticationKey,
-    connectors,
+    connectors: allConnectors,
   } = useAppSelector(selecConfigStore);
   const client = new NexusClient(accessToken);
   const [chains, setChains] = useState<any[]>([]);
+  const connectors = [...allConnectors];
+  if (triggerConnectorProp) {
+    connectors.push(triggerConnectorProp);
+  }
+  if (actionConnectorProp) {
+    connectors.push(actionConnectorProp);
+  }
 
   // workflow state
   const [workflow, setWorkflow] = useState<Workflow>({
@@ -491,7 +498,7 @@ export const WorkflowContextProvider = ({
         actions.actionConnector(0)?.name
       } Embedded Integration`;*/
       renamedWorkflow.title = `${actions.current(0)?.name} when ${
-        triggers.current?.name
+        trigger?.name
       }`;
       const readyWorkflow = {
         ...renamedWorkflow,

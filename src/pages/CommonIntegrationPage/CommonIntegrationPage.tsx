@@ -71,7 +71,10 @@ const CommonIntegrationPage = () => {
       try {
         const workflowsResponse = await client.workflow.list({});
         const workflows = workflowsResponse
-          ? workflowsResponse.map((wr: any) => wr.workflow)
+          ? workflowsResponse.map((wr: any) => ({
+              key: wr.key,
+              ...wr.workflow,
+            }))
           : [];
         dispatch(configStoreActions.setWorkflows(workflows));
       } catch (error: any) {
