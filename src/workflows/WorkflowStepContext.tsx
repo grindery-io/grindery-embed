@@ -82,7 +82,11 @@ export const WorkflowStepContextProvider = ({
   const actionParam = urlParams.get("action");
   const triggerParam = urlParams.get("trigger");
   const { accessToken: access_token } = useAppSelector(selectUserStore);
-  const { workflowKey: key } = useAppSelector(selecConfigStore);
+  const {
+    workflowKey: key,
+    skipTriggerAuth,
+    skipActionAuth,
+  } = useAppSelector(selecConfigStore);
   const client = new NexusClient(access_token);
   const { workflow, updateWorkflow } = useWorkflowContext();
   const [activeRow, setActiveRow] = useState(
@@ -146,11 +150,15 @@ export const WorkflowStepContextProvider = ({
     (connector && !connector.authentication) ||
       (type === "trigger"
         ? workflow.trigger?.authentication && connector?.authentication
-        : workflow.actions[index]?.authentication && connector?.authentication)
+        : workflow.actions[index]?.authentication &&
+          connector?.authentication) ||
+      (type === "trigger" ? skipTriggerAuth : skipActionAuth)
   );
 
   const operationAuthenticationIsRequired = Boolean(
-    connector && connector.authentication
+    connector &&
+      connector.authentication &&
+      (type === "trigger" ? !skipTriggerAuth : !skipActionAuth)
   );
 
   const passOutputFields = useCallback(() => {

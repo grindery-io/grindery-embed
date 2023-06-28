@@ -21,6 +21,8 @@ interface ConfigState {
   actionAuthenticationKey: string | null | undefined;
   actionsWhitelist: string[];
   hideTrigger: boolean;
+  skipTriggerAuth?: boolean;
+  skipActionAuth?: boolean;
 }
 
 const initialState: ConfigState = {
@@ -41,6 +43,8 @@ const initialState: ConfigState = {
   actionAuthenticationKey: undefined,
   actionsWhitelist: [],
   hideTrigger: false,
+  skipTriggerAuth: false,
+  skipActionAuth: false,
 };
 
 const configSlice = createSlice({

@@ -145,6 +145,8 @@ export const WorkflowContextProvider = ({
     actionAuthentication,
     actionAuthenticationKey,
     connectors: allConnectors,
+    skipTriggerAuth,
+    skipActionAuth,
   } = useAppSelector(selecConfigStore);
   const client = new NexusClient(accessToken);
   const [chains, setChains] = useState<any[]>([]);
@@ -416,12 +418,16 @@ export const WorkflowContextProvider = ({
 
   // check if trigger authentication is required
   const triggerAuthenticationIsRequired = Boolean(
-    triggerConnector && triggerConnector.authentication
+    triggerConnector && triggerConnector.authentication && !skipTriggerAuth
   );
 
   // check if action authentication is required
   const actionAuthenticationIsRequired = (index: number) =>
-    Boolean(actionConnector(index) && actionConnector(index)?.authentication);
+    Boolean(
+      actionConnector(index) &&
+        actionConnector(index)?.authentication &&
+        !skipActionAuth
+    );
 
   const triggers = {
     current: trigger,

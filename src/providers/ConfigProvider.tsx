@@ -43,6 +43,9 @@ export const ConfigProvider = ({ children }: ConfigProviderProps) => {
   const actionsWhitelist = urlParams.get("action.whitelist");
   const hideTrigger = urlParams.get("trigger.hide");
 
+  const skipTriggerAuth = urlParams.get("trigger.skipAuth");
+  const skipActionAuth = urlParams.get("action.skipAuth");
+
   const getWorkflows = useCallback(async () => {
     const client = new GrinderyClient(accessToken);
     if (accessToken) {
@@ -111,6 +114,8 @@ export const ConfigProvider = ({ children }: ConfigProviderProps) => {
         actionAuthenticationKey: actionAuthenticationKeyParam,
         actionsWhitelist: actionsWhitelist?.split(",") || [],
         hideTrigger: hideTrigger === "1",
+        skipTriggerAuth: skipTriggerAuth === "1",
+        skipActionAuth: skipActionAuth === "1",
       })
     );
   }, [
@@ -124,6 +129,8 @@ export const ConfigProvider = ({ children }: ConfigProviderProps) => {
     actionsWhitelist,
     hideTrigger,
     dispatch,
+    skipTriggerAuth,
+    skipActionAuth,
   ]);
 
   return <>{children}</>;

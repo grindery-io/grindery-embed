@@ -141,10 +141,10 @@ const StepHeader = (props: Props) => {
 
   const menuItems: any[] = [];
 
-  const operationIsTested =
+  /*const operationIsTested =
     type === "trigger"
       ? workflow.system?.trigger?.tested
-      : workflow.system?.actions?.[index]?.tested;
+      : workflow.system?.actions?.[index]?.tested;*/
 
   const handleHeaderClick = () => {
     if (activeStep !== step) {
@@ -293,10 +293,7 @@ const StepHeader = (props: Props) => {
           <img
             style={{ marginLeft: "auto", display: "block" }}
             src={
-              operation &&
-              operationIsAuthenticated &&
-              operationIsConfigured &&
-              (type === "trigger" || operationIsTested)
+              operation && operationIsAuthenticated && operationIsConfigured
                 ? ICONS.CHECK_CIRCLE
                 : ICONS.EXCLAMATION
             }
