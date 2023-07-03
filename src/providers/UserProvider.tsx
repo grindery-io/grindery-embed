@@ -1,13 +1,11 @@
 import React, { createContext, useEffect, useContext } from "react";
-import { useGrinderyNexus } from "use-grindery-nexus";
 import { useAppDispatch } from "../store";
 import { userStoreActions } from "../store/slices/userSlice";
+import GrinderyUserProvider from "./GrinderyUserProvider";
+import GrinderyNexusContextProvider from "use-grindery-nexus";
 
 // Context props
-type ContextProps = {
-  connectUser: () => void;
-  disconnectUser: () => void;
-};
+type ContextProps = {};
 
 // Context provider props
 type UserProviderProps = {
@@ -15,30 +13,19 @@ type UserProviderProps = {
 };
 
 // Init context
-export const UserContext = createContext<ContextProps>({
-  connectUser: () => {},
-  disconnectUser: () => {},
-});
+export const UserContext = createContext<ContextProps>({});
 
 export const UserProvider = ({ children }: UserProviderProps) => {
-  const { connect, disconnect, token, user } = useGrinderyNexus();
   const dispatch = useAppDispatch();
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const tokenParam = urlParams.get("access_token");
   const userParam = urlParams.get("user_address");
-  const access_token = token?.access_token || tokenParam || "";
-  const userId = user ? user : userParam ? `eip155:1:${userParam}` : ``;
+  const userChain = urlParams.get("user_chain");
+  const access_token = tokenParam || "";
+  const userId = userParam ? `eip155:${userChain || "1"}:${userParam}` : ``;
 
-  const connectUser = () => {
-    connect();
-  };
-
-  const disconnectUser = () => {
-    disconnect();
-    dispatch(userStoreActions.setAccessToken(""));
-    dispatch(userStoreActions.setUserId(""));
-  };
+  console.log("tokenParam", tokenParam);
 
   useEffect(() => {
     dispatch(userStoreActions.setAccessToken(access_token));
@@ -49,13 +36,14 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   }, [userId, dispatch]);
 
   return (
-    <UserContext.Provider
-      value={{
-        connectUser,
-        disconnectUser,
-      }}
-    >
-      {children}
+    <UserContext.Provider value={{}}>
+      {!tokenParam ? (
+        <GrinderyNexusContextProvider>
+          <GrinderyUserProvider>{children}</GrinderyUserProvider>
+        </GrinderyNexusContextProvider>
+      ) : (
+        children
+      )}
     </UserContext.Provider>
   );
 };

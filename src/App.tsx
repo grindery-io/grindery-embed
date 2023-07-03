@@ -11,13 +11,13 @@ import {
 import { useAppSelector } from "./store";
 import { selectUserStore } from "./store/slices/userSlice";
 import { Box, Button, Typography } from "@mui/material";
-import { useUserProvider } from "./providers/UserProvider";
 import { AppContainer, Loading } from "./components";
+import { useGrinderyUserProvider } from "./providers/GrinderyUserProvider";
 
 function App() {
   const { height } = useContentHeight();
   const { accessToken } = useAppSelector(selectUserStore);
-  const { connectUser } = useUserProvider();
+  const { connectUser } = useGrinderyUserProvider();
   const [initialized, setInitialized] = React.useState<boolean>(false);
 
   useEffect(() => {

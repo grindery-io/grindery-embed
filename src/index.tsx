@@ -3,7 +3,6 @@ import { createRoot } from "react-dom/client";
 import { Provider as StoreProvider } from "react-redux";
 import { ThemeProvider } from "@mui/material/styles";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import GrinderyNexusContextProvider from "use-grindery-nexus";
 import "./index.css";
 import App from "./App";
 import { store } from "./store";
@@ -21,14 +20,12 @@ let router = createBrowserRouter([{ path: "*", element: <App /> }]);
 
 root.render(
   <ThemeProvider theme={theme}>
-    <GrinderyNexusContextProvider>
-      <StoreProvider store={store}>
-        <ConfigProvider>
-          <UserProvider>
-            <RouterProvider router={router} />
-          </UserProvider>
-        </ConfigProvider>
-      </StoreProvider>
-    </GrinderyNexusContextProvider>
+    <StoreProvider store={store}>
+      <ConfigProvider>
+        <UserProvider>
+          <RouterProvider router={router} />
+        </UserProvider>
+      </ConfigProvider>
+    </StoreProvider>
   </ThemeProvider>
 );
