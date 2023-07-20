@@ -25,6 +25,7 @@ const CommonIntegrationPage = () => {
     triggerConnector,
     actionConnector,
     connectors,
+    redirect,
   } = useAppSelector(selecConfigStore);
   let { triggerConnectorKey, actionConnectorKey } = useParams();
   const { accessToken } = useAppSelector(selectUserStore);
@@ -135,7 +136,13 @@ const CommonIntegrationPage = () => {
         <WorkflowContextProvider
           triggerConnector={triggerConnector}
           actionConnector={actionConnector}
-          onSaved={getWorkflows}
+          onSaved={
+            redirect
+              ? () => {
+                  window.open(redirect, "_self");
+                }
+              : getWorkflows
+          }
         >
           <WorkflowBuilder />
         </WorkflowContextProvider>

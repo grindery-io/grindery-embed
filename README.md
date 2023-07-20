@@ -85,6 +85,8 @@ The available configuration options are as follows:
 | `trigger.authenticationkey`     | no       | GET parameter: Trigger connector credentials key                                                                   |
 | `action.authentication`         | no       | GET parameter: Authentication token for the action connector                                                       |
 | `action.authenticationkey`      | no       | GET parameter: Action connector credentials key                                                                    |
+| `create`                        | no       | GET parameter: Set to `1` to start with create workflow screen                                                     |
+| `redirect`                      | no       | GET parameter: Set url to redirect when workflow created, instead of showing the list of workflows                 |
 
 ### Examples
 

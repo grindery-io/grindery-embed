@@ -22,6 +22,8 @@ export const ConfigProvider = ({ children }: ConfigProviderProps) => {
     () => new URLSearchParams(queryString),
     [queryString]
   );
+  const createParam = urlParams.get("create") === "1";
+  const redirectParam = urlParams.get("redirect");
   const actionParam = urlParams.get("action");
   const triggerParam = urlParams.get("trigger");
   const triggerOperation =
@@ -116,6 +118,8 @@ export const ConfigProvider = ({ children }: ConfigProviderProps) => {
         hideTrigger: hideTrigger === "1",
         skipTriggerAuth: skipTriggerAuth === "1",
         skipActionAuth: skipActionAuth === "1",
+        create: createParam,
+        redirect: redirectParam || "",
       })
     );
   }, [
@@ -131,6 +135,8 @@ export const ConfigProvider = ({ children }: ConfigProviderProps) => {
     dispatch,
     skipTriggerAuth,
     skipActionAuth,
+    createParam,
+    redirectParam,
   ]);
 
   return <>{children}</>;
