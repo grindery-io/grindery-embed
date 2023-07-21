@@ -9,11 +9,12 @@ import { selectUserStore } from "../../store/slices/userSlice";
 import WorkflowsList from "../../workflows/WorkflowsList";
 import { Workflow } from "../../types/Workflow";
 import { Loading } from "../../components";
-import { Box } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import {
   configStoreActions,
   selecConfigStore,
 } from "../../store/slices/configSlice";
+import { useGrinderyUserProvider } from "../../providers/GrinderyUserProvider";
 
 const CommonIntegrationPage = () => {
   const dispatch = useAppDispatch();
@@ -26,9 +27,13 @@ const CommonIntegrationPage = () => {
     actionConnector,
     connectors,
     redirect,
+    connect,
   } = useAppSelector(selecConfigStore);
   let { triggerConnectorKey, actionConnectorKey } = useParams();
   const { accessToken } = useAppSelector(selectUserStore);
+  const { connectUser } = useGrinderyUserProvider();
+  const [connectTriggered, setConnectTriggered] =
+    React.useState<boolean>(false);
 
   const filteredWorkflows = workflows.filter(
     (item: Workflow) =>
@@ -105,51 +110,194 @@ const CommonIntegrationPage = () => {
     getWorkflows();
   }, [create, workflowKey, getWorkflows]);
 
-  return connectors && triggerConnector && !loading ? (
-    <ThemeProvider>
-      {!create && !workflowKey ? (
-        <Box
-          sx={{
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "stretch",
-            justifyContent: "center",
-            padding: "40px",
-          }}
-        >
-          {filteredWorkflows && filteredWorkflows.length > 0 && (
-            <WorkflowsList
-              connectors={connectors}
-              workflows={filteredWorkflows}
-            />
-          )}
+  useEffect(() => {
+    if (!accessToken && connect && !connectTriggered) {
+      connectUser();
+      setConnectTriggered(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accessToken, connect, connectTriggered]);
 
-          <Button
-            value="Create New Integration"
-            onClick={() => {
-              dispatch(configStoreActions.setCreate(true));
-            }}
-          />
-        </Box>
+  return accessToken ? (
+    <>
+      {connectors && triggerConnector && !loading ? (
+        <ThemeProvider>
+          {!create && !workflowKey ? (
+            <Box
+              sx={{
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "stretch",
+                justifyContent: "center",
+                padding: "40px",
+              }}
+            >
+              {filteredWorkflows && filteredWorkflows.length > 0 && (
+                <WorkflowsList
+                  connectors={connectors}
+                  workflows={filteredWorkflows}
+                />
+              )}
+
+              <Button
+                value="Create New Integration"
+                onClick={() => {
+                  dispatch(configStoreActions.setCreate(true));
+                }}
+              />
+            </Box>
+          ) : (
+            <WorkflowContextProvider
+              triggerConnector={triggerConnector}
+              actionConnector={actionConnector}
+              onSaved={
+                redirect
+                  ? () => {
+                      window.open(redirect, "_self");
+                    }
+                  : getWorkflows
+              }
+            >
+              <WorkflowBuilder />
+            </WorkflowContextProvider>
+          )}
+        </ThemeProvider>
       ) : (
-        <WorkflowContextProvider
-          triggerConnector={triggerConnector}
-          actionConnector={actionConnector}
-          onSaved={
-            redirect
-              ? () => {
-                  window.open(redirect, "_self");
-                }
-              : getWorkflows
-          }
-        >
-          <WorkflowBuilder />
-        </WorkflowContextProvider>
-      )}
-    </ThemeProvider>
+        <Loading title="Loading..." />
+      )}{" "}
+    </>
   ) : (
-    <Loading title="Loading..." />
+    <Box
+      sx={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "stretch",
+        justifyContent: "center",
+        padding: "40px",
+      }}
+    >
+      {triggerConnector && (
+        <>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="center"
+            flexWrap="nowrap"
+            sx={{
+              marginBottom: "24px",
+              "& img": {
+                width: "48px",
+                height: "48px",
+                display: "block",
+              },
+            }}
+          >
+            <Box
+              sx={{
+                padding: "10px",
+                background: "#fff",
+                border: "1px solid rgb(220, 220, 220)",
+                borderRadius: "8px",
+              }}
+            >
+              <img
+                src={triggerConnector?.icon}
+                alt={`${triggerConnector.name} icon`}
+              />
+            </Box>
+            {actionConnector && (
+              <>
+                <Box
+                  sx={{
+                    position: "relative",
+                    width: "68px",
+                    height: "70px",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      background: "rgb(220, 220, 220)",
+                      position: "absolute",
+                      left: 0,
+                      top: "35px",
+                      width: "100%",
+                      height: "1px",
+                    }}
+                  />
+                  <img
+                    style={{
+                      position: "absolute",
+                      left: "24px",
+                      top: "25px",
+                      width: "20px",
+                      height: "20px",
+                      display: "block",
+                    }}
+                    src="https://www.grindery.io/hubfs/plus-icon.svg"
+                    alt="plus icon"
+                  />
+                </Box>
+
+                <Box
+                  sx={{
+                    padding: "10px",
+                    background: "#fff",
+                    border: "1px solid rgb(220, 220, 220)",
+                    borderRadius: "8px",
+                  }}
+                >
+                  <img
+                    src={actionConnector?.icon}
+                    alt={`${actionConnector.name} icon`}
+                  />
+                </Box>
+              </>
+            )}
+          </Stack>
+          <Typography
+            sx={{
+              marginBottom: "32px",
+              fontSize: "32px",
+              fontWeight: "bold",
+              textAlign: "center",
+              color: "#000",
+              lineHeight: "130%",
+            }}
+          >
+            Connect
+            <br />
+            {triggerConnector.name} to {actionConnector?.name || "Apps/dApps"}
+          </Typography>
+        </>
+      )}
+
+      <Box sx={{ textAlign: "center", "& button": { width: "auto" } }}>
+        <Button
+          variant="contained"
+          onClick={() => {
+            connectUser();
+          }}
+          color="primary"
+          value="Connect MetaMask Wallet"
+          icon="/images/icons/metamask-logo.svg"
+        ></Button>
+      </Box>
+
+      <Typography
+        sx={{
+          textAlign: "center",
+          fontSize: "18px",
+          fontWeight: "bold",
+          margin: "32px 0",
+          color: "#000",
+        }}
+      >
+        Grindery's integration-platform-as-a-protocol (iPaaP) is the fastest and
+        easiest way to connect dApps with thousands of web2 Apps.
+      </Typography>
+    </Box>
   );
 };
 

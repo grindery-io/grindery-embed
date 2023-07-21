@@ -71,6 +71,14 @@ function App() {
             <Routes>
               <Route path="/oauth" element={<OauthPage />} />
               <Route
+                path="/:triggerConnectorKey/:actionConnectorKey"
+                element={<CommonIntegrationPage />}
+              />
+              <Route
+                path="/:triggerConnectorKey"
+                element={<CommonIntegrationPage />}
+              />
+              <Route
                 path="*"
                 element={
                   <Box

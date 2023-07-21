@@ -38,7 +38,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   return (
     <UserContext.Provider value={{}}>
       {!tokenParam ? (
-        <GrinderyNexusContextProvider>
+        <GrinderyNexusContextProvider cacheProvider={false}>
           <GrinderyUserProvider>{children}</GrinderyUserProvider>
         </GrinderyNexusContextProvider>
       ) : (

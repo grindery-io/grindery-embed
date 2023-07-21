@@ -24,6 +24,7 @@ export const ConfigProvider = ({ children }: ConfigProviderProps) => {
   );
   const createParam = urlParams.get("create") === "1";
   const redirectParam = urlParams.get("redirect");
+  const connectParam = urlParams.get("connect") === "1";
   const actionParam = urlParams.get("action");
   const triggerParam = urlParams.get("trigger");
   const triggerOperation =
@@ -120,6 +121,7 @@ export const ConfigProvider = ({ children }: ConfigProviderProps) => {
         skipActionAuth: skipActionAuth === "1",
         create: createParam,
         redirect: redirectParam || "",
+        connect: connectParam,
       })
     );
   }, [
@@ -137,6 +139,7 @@ export const ConfigProvider = ({ children }: ConfigProviderProps) => {
     skipActionAuth,
     createParam,
     redirectParam,
+    connectParam,
   ]);
 
   return <>{children}</>;

@@ -24,6 +24,7 @@ interface ConfigState {
   skipTriggerAuth?: boolean;
   skipActionAuth?: boolean;
   redirect: string;
+  connect?: boolean;
 }
 
 const initialState: ConfigState = {
@@ -47,6 +48,7 @@ const initialState: ConfigState = {
   skipTriggerAuth: false,
   skipActionAuth: false,
   redirect: "",
+  connect: false,
 };
 
 const configSlice = createSlice({
