@@ -28,6 +28,7 @@ const CommonIntegrationPage = () => {
     connectors,
     redirect,
     connect,
+    description,
   } = useAppSelector(selecConfigStore);
   let { triggerConnectorKey, actionConnectorKey } = useParams();
   const { accessToken } = useAppSelector(selectUserStore);
@@ -178,68 +179,25 @@ const CommonIntegrationPage = () => {
         padding: "40px",
       }}
     >
-      {triggerConnector && (
+      {(window.location.hostname === "templates.grindery.io" ||
+        description) && (
         <>
-          <Stack
-            direction="row"
-            alignItems="center"
-            justifyContent="center"
-            flexWrap="nowrap"
-            sx={{
-              marginBottom: "24px",
-              "& img": {
-                width: "48px",
-                height: "48px",
-                display: "block",
-              },
-            }}
-          >
-            <Box
-              sx={{
-                padding: "10px",
-                background: "#fff",
-                border: "1px solid rgb(220, 220, 220)",
-                borderRadius: "8px",
-              }}
-            >
-              <img
-                src={triggerConnector?.icon}
-                alt={`${triggerConnector.name} icon`}
-              />
-            </Box>
-            {actionConnector && (
-              <>
-                <Box
-                  sx={{
-                    position: "relative",
-                    width: "68px",
-                    height: "70px",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      background: "rgb(220, 220, 220)",
-                      position: "absolute",
-                      left: 0,
-                      top: "35px",
-                      width: "100%",
-                      height: "1px",
-                    }}
-                  />
-                  <img
-                    style={{
-                      position: "absolute",
-                      left: "24px",
-                      top: "25px",
-                      width: "20px",
-                      height: "20px",
-                      display: "block",
-                    }}
-                    src="https://www.grindery.io/hubfs/plus-icon.svg"
-                    alt="plus icon"
-                  />
-                </Box>
-
+          {triggerConnector && (
+            <>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="center"
+                flexWrap="nowrap"
+                sx={{
+                  marginBottom: "24px",
+                  "& img": {
+                    width: "48px",
+                    height: "48px",
+                    display: "block",
+                  },
+                }}
+              >
                 <Box
                   sx={{
                     padding: "10px",
@@ -249,27 +207,76 @@ const CommonIntegrationPage = () => {
                   }}
                 >
                   <img
-                    src={actionConnector?.icon}
-                    alt={`${actionConnector.name} icon`}
+                    src={triggerConnector?.icon}
+                    alt={`${triggerConnector.name} icon`}
                   />
                 </Box>
-              </>
-            )}
-          </Stack>
-          <Typography
-            sx={{
-              marginBottom: "32px",
-              fontSize: "32px",
-              fontWeight: "bold",
-              textAlign: "center",
-              color: "#000",
-              lineHeight: "130%",
-            }}
-          >
-            Connect
-            <br />
-            {triggerConnector.name} to {actionConnector?.name || "Apps/dApps"}
-          </Typography>
+                {actionConnector && (
+                  <>
+                    <Box
+                      sx={{
+                        position: "relative",
+                        width: "68px",
+                        height: "70px",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          background: "rgb(220, 220, 220)",
+                          position: "absolute",
+                          left: 0,
+                          top: "35px",
+                          width: "100%",
+                          height: "1px",
+                        }}
+                      />
+                      <img
+                        style={{
+                          position: "absolute",
+                          left: "24px",
+                          top: "25px",
+                          width: "20px",
+                          height: "20px",
+                          display: "block",
+                        }}
+                        src="https://www.grindery.io/hubfs/plus-icon.svg"
+                        alt="plus icon"
+                      />
+                    </Box>
+
+                    <Box
+                      sx={{
+                        padding: "10px",
+                        background: "#fff",
+                        border: "1px solid rgb(220, 220, 220)",
+                        borderRadius: "8px",
+                      }}
+                    >
+                      <img
+                        src={actionConnector?.icon}
+                        alt={`${actionConnector.name} icon`}
+                      />
+                    </Box>
+                  </>
+                )}
+              </Stack>
+              <Typography
+                sx={{
+                  marginBottom: "32px",
+                  fontSize: "32px",
+                  fontWeight: "bold",
+                  textAlign: "center",
+                  color: "#000",
+                  lineHeight: "130%",
+                }}
+              >
+                Connect
+                <br />
+                {triggerConnector.name} to{" "}
+                {actionConnector?.name || "Apps/dApps"}
+              </Typography>
+            </>
+          )}
         </>
       )}
 
@@ -285,18 +292,21 @@ const CommonIntegrationPage = () => {
         ></Button>
       </Box>
 
-      <Typography
-        sx={{
-          textAlign: "center",
-          fontSize: "18px",
-          fontWeight: "bold",
-          margin: "32px 0",
-          color: "#000",
-        }}
-      >
-        Grindery's integration-platform-as-a-protocol (iPaaP) is the fastest and
-        easiest way to connect dApps with thousands of web2 Apps.
-      </Typography>
+      {(window.location.hostname === "templates.grindery.io" ||
+        description) && (
+        <Typography
+          sx={{
+            textAlign: "center",
+            fontSize: "18px",
+            fontWeight: "bold",
+            margin: "32px 0",
+            color: "#000",
+          }}
+        >
+          Grindery's integration-platform-as-a-protocol (iPaaP) is the fastest
+          and easiest way to connect dApps with thousands of web2 Apps.
+        </Typography>
+      )}
     </Box>
   );
 };

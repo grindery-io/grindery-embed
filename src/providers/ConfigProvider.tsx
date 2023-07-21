@@ -25,6 +25,7 @@ export const ConfigProvider = ({ children }: ConfigProviderProps) => {
   const createParam = urlParams.get("create") === "1";
   const redirectParam = urlParams.get("redirect");
   const connectParam = urlParams.get("connect") === "1";
+  const showDescriptionParam = urlParams.get("description") === "1";
   const actionParam = urlParams.get("action");
   const triggerParam = urlParams.get("trigger");
   const triggerOperation =
@@ -122,6 +123,7 @@ export const ConfigProvider = ({ children }: ConfigProviderProps) => {
         create: createParam,
         redirect: redirectParam || "",
         connect: connectParam,
+        description: showDescriptionParam,
       })
     );
   }, [
@@ -140,6 +142,7 @@ export const ConfigProvider = ({ children }: ConfigProviderProps) => {
     createParam,
     redirectParam,
     connectParam,
+    showDescriptionParam,
   ]);
 
   return <>{children}</>;
