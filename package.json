@@ -1,6 +1,6 @@
 {
   "name": "grindery-embed",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -18,7 +18,7 @@
     "@types/react-dom": "^18.0.0",
     "axios": "^1.4.0",
     "fastest-validator": "^1.17.0",
-    "grindery-nexus-client": "^1.0.2",
+    "grindery-nexus-client": "1.0.6",
     "grindery-ui": "^0.10.1",
     "lodash": "^4.17.21",
     "react": "^18.2.0",

@@ -348,6 +348,7 @@ const StepTest = ({ outputFields }: Props) => {
                     input: workflow.trigger.input || {},
                   },
                   environment: "production",
+                  source: "urn:grindery:embed",
                 },
                 id: new Date(),
               })
@@ -416,7 +417,11 @@ const StepTest = ({ outputFields }: Props) => {
         //setSuccess(null);
         setLoading(true);
         const res = await client.connector
-          .testAction({ step: workflow.actions[index], input: values })
+          .testAction({
+            step: workflow.actions[index],
+            input: values,
+            source: "urn:grindery:embed",
+          })
           .catch((err) => {
             console.error("testAction error:", err.message);
             setError(err.message || null);

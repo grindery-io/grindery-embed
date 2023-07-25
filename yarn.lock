@@ -6760,10 +6760,10 @@ graphemer@^1.4.0:
   resolved "https://registry.yarnpkg.com/graphemer/-/graphemer-1.4.0.tgz#fb2f1d55e0e3a1849aeffc90c4fa0dd53a0e66c6"
   integrity sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==
 
-grindery-nexus-client@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/grindery-nexus-client/-/grindery-nexus-client-1.0.2.tgz#02e3ed7736ffdb70d1de628074a6f8065a8ba5c7"
-  integrity sha512-Vezka41Qeo12HnpY2Esva3jFKNACVw1nzcFBRVnM8yag0Z+IU4ppIht+Ns59GLskvYw4qmGILXubD/Byh3VxpA==
+grindery-nexus-client@1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/grindery-nexus-client/-/grindery-nexus-client-1.0.6.tgz#69d1e7a54d59cd3d1a911d0d5c09dc0f72ed9e24"
+  integrity sha512-5EsrzWnAE04kNFrw0B0LXqbrh+8+Mm8z1tQd40RuUrI7lybEMpFsWZ3VOkJ2YVyccW5aBd1+LxZiReJHirJ4WA==
   dependencies:
     axios "^0.27.2"
     jwt-decode "^3.1.2"
