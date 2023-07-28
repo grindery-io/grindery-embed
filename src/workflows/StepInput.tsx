@@ -15,6 +15,8 @@ import { getOutputOptions } from "../utils/outputOptions";
 import { getValidationScheme } from "../utils/validationScheme";
 import { validator } from "../utils/validator";
 import { jsonrpcObj } from "../utils/jsonRpc";
+import { useAppSelector } from "../store";
+import { selectUserStore } from "../store/slices/userSlice";
 
 const Container = styled.div`
   border-top: 1px solid #dcdcdc;
@@ -137,7 +139,9 @@ const StepInput = ({ outputFields }: Props) => {
     chains: evmChains,
   } = useWorkflowContext();
 
-  const client = new NexusClient();
+  const { accessToken } = useAppSelector(selectUserStore);
+
+  const client = new NexusClient(accessToken);
   const [gas, setGas] = useState("0.001");
 
   const index = step - 2;
