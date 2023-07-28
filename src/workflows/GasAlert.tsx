@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Alert } from "grindery-ui";
 import GasInput from "./GasInput";
-import { useGrinderyNexus } from "use-grindery-nexus";
+import { useGrinderyLogin } from "use-grindery-login";
 import axios from "axios";
 import { ICONS } from "../config";
 
@@ -19,7 +19,7 @@ type Props = {
 
 const GasAlert = (props: Props) => {
   const { gasToken, chain, gas, onChange } = props;
-  const { token } = useGrinderyNexus();
+  const { token } = useGrinderyLogin();
   const workspaceToken = "";
   const [droneAddress, setDroneAddress] = useState("");
 

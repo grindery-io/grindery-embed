@@ -1,8 +1,7 @@
 import React, { createContext, useEffect, useContext } from "react";
-import { useGrinderyNexus } from "use-grindery-nexus";
+import { useGrinderyLogin } from "use-grindery-login";
 import { useAppDispatch, useAppSelector } from "../store";
 import { selectUserStore, userStoreActions } from "../store/slices/userSlice";
-import { sendGoogleEvent } from "../utils/googleTracking";
 
 // Context props
 type ContextProps = {
@@ -24,7 +23,7 @@ export const UserContext = createContext<ContextProps>({
 export const GrinderyUserProvider = ({
   children,
 }: GrinderyUserProviderProps) => {
-  const { connect, disconnect, token, user } = useGrinderyNexus();
+  const { connect, disconnect, token, user } = useGrinderyLogin();
   const dispatch = useAppDispatch();
   const { accessToken, userId } = useAppSelector(selectUserStore);
 
@@ -51,16 +50,6 @@ export const GrinderyUserProvider = ({
       dispatch(userStoreActions.setUserId(user));
     }
   }, [userId, user, dispatch]);
-
-  useEffect(() => {
-    if (userId) {
-      sendGoogleEvent({
-        event: "registration",
-        authentication_method: "wallet",
-        user_id: userId,
-      });
-    }
-  }, [userId]);
 
   return (
     <UserContext.Provider

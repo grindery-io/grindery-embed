@@ -2,7 +2,7 @@ import React, { createContext, useEffect, useContext } from "react";
 import { useAppDispatch } from "../store";
 import { userStoreActions } from "../store/slices/userSlice";
 import GrinderyUserProvider from "./GrinderyUserProvider";
-import GrinderyNexusContextProvider from "use-grindery-nexus";
+import GrinderyLoginProvider from "use-grindery-login";
 
 // Context props
 type ContextProps = {};
@@ -38,9 +38,9 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   return (
     <UserContext.Provider value={{}}>
       {!tokenParam ? (
-        <GrinderyNexusContextProvider cacheProvider={false}>
+        <GrinderyLoginProvider>
           <GrinderyUserProvider>{children}</GrinderyUserProvider>
-        </GrinderyNexusContextProvider>
+        </GrinderyLoginProvider>
       ) : (
         children
       )}
