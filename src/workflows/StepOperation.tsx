@@ -172,7 +172,7 @@ const StepOperation = (props: Props) => {
               }
               onChange={handleOperationChange}
               options={options}
-              value={value}
+              value={value || ""}
               tooltip={
                 type === "trigger"
                   ? "This is the what will start your workflow."
@@ -192,7 +192,7 @@ const StepOperation = (props: Props) => {
                     ...op,
                     group: undefined,
                   }))}
-                  value={value}
+                  value={value || ""}
                   tooltip={
                     type === "trigger"
                       ? "This is the what will start your workflow."
