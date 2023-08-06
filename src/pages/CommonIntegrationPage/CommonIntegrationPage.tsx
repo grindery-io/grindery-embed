@@ -31,6 +31,7 @@ const CommonIntegrationPage = () => {
     description,
   } = useAppSelector(selecConfigStore);
   let { triggerConnectorKey, actionConnectorKey } = useParams();
+  const hasAction = !!actionConnectorKey;
   const { accessToken } = useAppSelector(selectUserStore);
   const { connectUser } = useGrinderyUserProvider();
   const [connectTriggered, setConnectTriggered] =
@@ -121,7 +122,10 @@ const CommonIntegrationPage = () => {
 
   return accessToken ? (
     <>
-      {connectors && triggerConnector && !loading ? (
+      {connectors &&
+      triggerConnector &&
+      !loading &&
+      ((hasAction && actionConnector) || !hasAction) ? (
         <ThemeProvider>
           {!create && !workflowKey ? (
             <Box
