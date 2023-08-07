@@ -3,6 +3,7 @@ import { useAppDispatch } from "../store";
 import { userStoreActions } from "../store/slices/userSlice";
 import GrinderyUserProvider from "./GrinderyUserProvider";
 import GrinderyLoginProvider from "use-grindery-login";
+import { AppContainer, Loading } from "../components";
 
 // Context props
 type ContextProps = {};
@@ -38,7 +39,13 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   return (
     <UserContext.Provider value={{}}>
       {!tokenParam ? (
-        <GrinderyLoginProvider>
+        <GrinderyLoginProvider
+          loader={
+            <AppContainer>
+              <Loading title="Loading..." />
+            </AppContainer>
+          }
+        >
           <GrinderyUserProvider>{children}</GrinderyUserProvider>
         </GrinderyLoginProvider>
       ) : (
