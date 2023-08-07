@@ -9,6 +9,7 @@ import { jsonrpcObj } from "../utils/jsonRpc";
 import { ICONS } from "../config";
 import { useAppSelector } from "../store";
 import { selectUserStore } from "../store/slices/userSlice";
+import { getParameterByName } from "../utils/getParameterByName";
 
 const AUTH_ENDPOINT = `https://orchestrator.grindery.org/credentials/production`;
 const GET_OAUTH_TOKEN_ENDPOINT =
@@ -127,46 +128,47 @@ const StepAuthentication = (props: Props) => {
     setActiveRow(1);
   };
 
-  const receiveMessage = (e: any) => {
-    if (
-      e.data &&
-      e.data.method === "gr_authCode" &&
-      e.data.params &&
-      e.data.params.authCode
-    ) {
-      const code = e.data.params.authCode;
+  const receiveMessage = (e: any, bc: any) => {
+    if (e.origin === window.location.origin) {
+      const { data } = e;
 
-      if (
-        connector &&
-        connector.authentication &&
-        connector.authentication.type &&
-        connector.authentication.type === "oauth2" &&
-        code
-      ) {
-        const data = {
-          code: code,
-        };
-        axios({
-          method: "POST",
-          url: GET_OAUTH_TOKEN_ENDPOINT,
-          headers: {
-            Authorization: `Bearer ${workspaceToken || access_token}`,
-          },
-          data,
-        })
-          .then((res) => {
-            if (res && res.data) {
-              const credentials = res.data;
-              setAuth(credentials, true);
-            }
+      if (data.gr_url) {
+        const codeParam = getParameterByName("code", data.gr_url);
+
+        if (
+          connector &&
+          connector.authentication &&
+          connector.authentication.type &&
+          connector.authentication.type === "oauth2" &&
+          codeParam
+        ) {
+          const data = {
+            code: codeParam,
+          };
+          axios({
+            method: "POST",
+            url: GET_OAUTH_TOKEN_ENDPOINT,
+            headers: {
+              Authorization: `Bearer ${workspaceToken || access_token}`,
+            },
+            data,
           })
-          .catch((err) => {
-            console.error("getAccessTokenRequest err", err);
-          });
-      }
+            .then((res) => {
+              if (res && res.data) {
+                const credentials = res.data;
+                setAuth(credentials, true);
+              }
+            })
+            .catch((err) => {
+              console.error("getAccessTokenRequest err", err);
+            });
+        }
 
-      e.source.postMessage({ gr_close: true }, window.location.origin);
-      window.removeEventListener("message", receiveMessage, false);
+        //e.source.postMessage({ gr_close: true }, window.location.origin);
+        bc.postMessage({ gr_close: true });
+        bc.close();
+        //window.removeEventListener("message", receiveMessage, false);
+      }
     }
   };
 
@@ -186,13 +188,17 @@ const StepAuthentication = (props: Props) => {
     }
     setOperationIsTested(false);
     if (connector?.authentication?.type === "oauth2") {
-      window.removeEventListener("message", receiveMessage, false);
+      //window.removeEventListener("message", receiveMessage, false);
 
       window.open(
         `${AUTH_ENDPOINT}/${connector.key}/auth?access_token=${access_token}&redirect_uri=${window.location.origin}/oauth`
       );
 
-      window.addEventListener("message", receiveMessage, false);
+      //window.addEventListener("message", receiveMessage, false);
+      const bc = new BroadcastChannel("grindery-connector-authentication");
+      bc.onmessage = (event) => {
+        receiveMessage(event, bc);
+      };
     }
   };
 
