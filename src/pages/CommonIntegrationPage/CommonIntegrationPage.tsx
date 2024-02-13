@@ -183,7 +183,7 @@ const CommonIntegrationPage = () => {
         padding: "40px",
       }}
     >
-      {(window.location.hostname === "templates.grindery.io" ||
+      {(window.location.hostname === "templates.grindery.com" ||
         description) && (
         <>
           {triggerConnector && (
@@ -243,7 +243,7 @@ const CommonIntegrationPage = () => {
                           height: "20px",
                           display: "block",
                         }}
-                        src="https://www.grindery.io/hubfs/plus-icon.svg"
+                        src="https://www.grindery.com/hubfs/plus-icon.svg"
                         alt="plus icon"
                       />
                     </Box>
@@ -296,7 +296,7 @@ const CommonIntegrationPage = () => {
         ></Button>
       </Box>
 
-      {(window.location.hostname === "templates.grindery.io" ||
+      {(window.location.hostname === "templates.grindery.com" ||
         description) && (
         <Typography
           sx={{

@@ -61,11 +61,11 @@ The App expects the following message from the parent window:
 
 The Grindery Embed App is configurable via URL parameters and query strings.
 
-The base app url is `embed.grindery.io`. By adding parameters to the URL, you can specify trigger and action Connectors. More information about Connectors can be found in the [Grindery Nexus Schema V2](https://github.com/grindery-io/grindery-nexus-schema-v2/tree/master/connectors) repository.
+The base app url is `embed.grindery.com`. By adding parameters to the URL, you can specify trigger and action Connectors. More information about Connectors can be found in the [Grindery Nexus Schema V2](https://github.com/grindery-io/grindery-nexus-schema-v2/tree/master/connectors) repository.
 
 A full list of available connectors can be found here: [Grindery Nexus Schema V2 Connectors](https://github.com/grindery-io/grindery-nexus-schema-v2/tree/master/cds)
 
-For example, to set up Slack notifications when a new record is added to Airtable, you can use this URL: `embed.grindery.io/airtable/slack`. See more examples below.
+For example, to set up Slack notifications when a new record is added to Airtable, you can use this URL: `embed.grindery.com/airtable/slack`. See more examples below.
 
 GET parameters can be used to specify the exact trigger and/or action operation and prefill input fields with values.
 
@@ -92,12 +92,12 @@ The available configuration options are as follows:
 
 Example URLs demonstrating the usage of optional parameters:
 
-- Safe trigger, Slack action: https://embed.grindery.io/safe/slack
-- Safe trigger, any action: https://embed.grindery.io/safe
-- Safe trigger, whitelisted actions: https://embed.grindery.io/safe?action.whitelist=slack,airtable
-- Safe trigger with crednetials, any action: https://embed.grindery.io/safe?trigger.authenticationKey=123456
-- Safe trigger, Slack action with authentication token: https://embed.grindery.io/safe/slack?action.authentication=123456
-- Safe trigger with predefined operation and input fields, Slack action with predefined operation: https://embed.grindery.io/safe/slack?trigger=safeTransactionExecutedTransferNative&trigger.input._grinderyChain=eip155:1&trigger.input._grinderyContract=0x123456&action=sendChannelMessage
+- Safe trigger, Slack action: https://embed.grindery.com/safe/slack
+- Safe trigger, any action: https://embed.grindery.com/safe
+- Safe trigger, whitelisted actions: https://embed.grindery.com/safe?action.whitelist=slack,airtable
+- Safe trigger with crednetials, any action: https://embed.grindery.com/safe?trigger.authenticationKey=123456
+- Safe trigger, Slack action with authentication token: https://embed.grindery.com/safe/slack?action.authentication=123456
+- Safe trigger with predefined operation and input fields, Slack action with predefined operation: https://embed.grindery.com/safe/slack?trigger=safeTransactionExecutedTransferNative&trigger.input._grinderyChain=eip155:1&trigger.input._grinderyContract=0x123456&action=sendChannelMessage
 
 ## Development
 

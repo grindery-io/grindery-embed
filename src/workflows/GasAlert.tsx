@@ -27,7 +27,7 @@ const GasAlert = (props: Props) => {
     let res;
     try {
       res = await axios.post(
-        "https://orchestrator.grindery.org/webhook/web3/callSmartContract/getDroneAddress",
+        "https://orchestrator.grindery.com/webhook/web3/callSmartContract/getDroneAddress",
         {
           chain: chainId,
           token: token,

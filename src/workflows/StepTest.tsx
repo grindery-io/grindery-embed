@@ -313,7 +313,7 @@ const StepTest = ({ outputFields }: Props) => {
         setLoading(true);
 
         // set ws connection
-        const ws = new WebSocket("wss://orchestrator.grindery.org");
+        const ws = new WebSocket("wss://orchestrator.grindery.com");
 
         // authenticate
         const authRequestId = new Date();

@@ -18,7 +18,7 @@ const useOAuth2 = (props: UseOAuth2Props) => {
     if (accessToken && authCode) {
       try {
         const res = await axios.post(
-          "https://orchestrator.grindery.org/credentials/auth/complete",
+          "https://orchestrator.grindery.com/credentials/auth/complete",
           { code: authCode },
           {
             headers: {
@@ -55,7 +55,7 @@ const useOAuth2 = (props: UseOAuth2Props) => {
   useEffect(() => {
     if (accessToken && !authCode && !authenticated) {
       window.open(
-        `https://orchestrator.grindery.org/credentials/production/${connectorKey}/auth?access_token=${accessToken}&redirect_uri=${window.location.origin}/oauth`
+        `https://orchestrator.grindery.com/credentials/production/${connectorKey}/auth?access_token=${accessToken}&redirect_uri=${window.location.origin}/oauth`
       );
     }
   }, [accessToken, authCode, connectorKey, authenticated]);

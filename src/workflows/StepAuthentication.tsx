@@ -11,9 +11,9 @@ import { useAppSelector } from "../store";
 import { selectUserStore } from "../store/slices/userSlice";
 import { getParameterByName } from "../utils/getParameterByName";
 
-const AUTH_ENDPOINT = `https://orchestrator.grindery.org/credentials/production`;
+const AUTH_ENDPOINT = `https://orchestrator.grindery.com/credentials/production`;
 const GET_OAUTH_TOKEN_ENDPOINT =
-  "https://orchestrator.grindery.org/credentials/auth/complete";
+  "https://orchestrator.grindery.com/credentials/auth/complete";
 
 const Container = styled.div`
   border-top: 1px solid #dcdcdc;
